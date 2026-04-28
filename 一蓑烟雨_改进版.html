@@ -1,0 +1,721 @@
+<!DOCTYPE html><html data-src-ver="10e4f721" lang="zh-CN"><head>
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一蓑烟雨任平生 · 苏轼漫游</title>
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&amp;family=Noto+Serif+SC:wght@300;400;500;600;700;900&amp;family=ZCOOL+XiaoWei&amp;family=ZCOOL+QingKe+HuangYou&amp;family=Long+Cang&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F0E4C5;
+  --paper-warm:#EED9AE;
+  --ink:#1A150C;
+  --ink-soft:#332A1C;
+  --ink-dim:#5C4E36;
+  --ink-faint:#8F7D5E;
+  --ru:#B8763E;
+  --dao:#3F7A6A;
+  --fo:#33486E;
+  --rouge:#A83A38;
+  --void:#14110C;
+  --seal:#A83A38;
+  --water:#6A9DB5;
+  --water-deep:#4A7A95;
+  --mount:#86A57A;
+  --mount-deep:#5E8560;
+  --land:#E8D6A8;
+  --land-pale:#F0E4C5;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',serif;overflow:hidden;height:100vh;width:100vw}
+
+/* ============ MAP ============ */
+#map{position:absolute;inset:0;background:#EED9AE}
+.mapboxgl-canvas{cursor:grab!important}
+.mapboxgl-canvas:active{cursor:grabbing!important}
+.mapboxgl-ctrl-attrib{opacity:.5;font-size:9px!important}
+
+/* subtle paper grain overlay */
+#map-veil{position:absolute;inset:0;pointer-events:none;z-index:3;
+  background:
+    radial-gradient(ellipse 110% 80% at 50% 50%, transparent 55%, rgba(120,80,30,.18) 100%),
+    repeating-linear-gradient(0deg, rgba(120,95,50,.022) 0 2px, transparent 2px 5px),
+    repeating-linear-gradient(90deg, rgba(120,95,50,.018) 0 2px, transparent 2px 6px);
+  mix-blend-mode:multiply;transition:opacity 1.2s}
+
+/* ============ WEATHER LAYERS (dramatic) ============ */
+#weather{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:hidden;transition:opacity 1.4s}
+.w-layer{position:absolute;inset:0;opacity:0;transition:opacity 2s}
+.w-layer.on{opacity:1}
+
+/* RAIN - heavier, angled streaks + darkening */
+.w-rain{
+  background:
+    linear-gradient(180deg, rgba(25,30,40,.32), rgba(25,30,40,.15) 50%, rgba(25,30,40,.28)),
+    repeating-linear-gradient(105deg, transparent 0 2px, rgba(210,220,230,.35) 2px 3px, transparent 3px 18px),
+    repeating-linear-gradient(103deg, transparent 0 9px, rgba(180,200,215,.18) 9px 10px, transparent 10px 36px);
+  mix-blend-mode:screen;
+}
+.w-rain.on{animation:rainMove 0.6s linear infinite}
+@keyframes rainMove{to{background-position:0 0, 55px 180px, 90px 280px}}
+.w-rain::after{content:'';position:absolute;inset:0;background:rgba(10,15,25,.25);mix-blend-mode:multiply}
+
+/* MIST - thicker drifting fog bands */
+.w-mist{
+  background:
+    radial-gradient(ellipse 70% 30% at 20% 55%, rgba(245,240,225,.68), transparent 70%),
+    radial-gradient(ellipse 80% 35% at 80% 45%, rgba(235,230,215,.55), transparent 70%),
+    radial-gradient(ellipse 120% 45% at 50% 78%, rgba(240,232,212,.42), transparent 80%),
+    radial-gradient(ellipse 60% 25% at 35% 30%, rgba(250,245,230,.5), transparent 70%);
+}
+.w-mist.on{animation:mistDrift 32s ease-in-out infinite alternate}
+@keyframes mistDrift{0%{background-position:0 0,0 0,0 0,0 0}100%{background-position:80px 10px,-60px -20px,40px 5px,-30px 10px}}
+
+/* SNOW - bigger flakes, three layers */
+.w-snow::before, .w-snow::after{content:'';position:absolute;inset:-10%;
+  background-image:
+    radial-gradient(circle, rgba(255,253,245,.95) 1.2px, transparent 1.8px),
+    radial-gradient(circle, rgba(255,253,245,.75) 0.9px, transparent 1.4px),
+    radial-gradient(circle, rgba(255,253,245,.5) 0.6px, transparent 1px);
+  background-size:80px 80px, 55px 55px, 35px 35px;
+  background-position:0 0, 25px 30px, 10px 15px;}
+.w-snow::before{animation:snowDown 12s linear infinite}
+.w-snow::after{animation:snowDown 22s linear infinite;opacity:.6;background-size:110px 110px,70px 70px,45px 45px}
+@keyframes snowDown{to{background-position:10px 500px, 40px 520px, 20px 480px}}
+
+/* MOON - dramatic disk + cast light */
+.w-moon{
+  background:
+    radial-gradient(circle 100px at 82% 14%, rgba(255,248,225,1) 0%, rgba(255,248,225,.85) 40%, rgba(255,248,225,.2) 75%, transparent 100%),
+    radial-gradient(circle 380px at 82% 14%, rgba(240,230,200,.35) 0%, rgba(200,200,180,.15) 45%, transparent 80%),
+    linear-gradient(180deg, rgba(5,10,25,.65) 0%, rgba(5,10,25,.35) 40%, rgba(5,10,25,.25) 100%);
+  mix-blend-mode:multiply}
+.w-moon::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(circle 90px at 82% 14%, rgba(255,250,230,1), rgba(255,250,230,.6) 45%, transparent 75%);
+  mix-blend-mode:screen}
+
+/* DAWN - stronger amber sweep */
+.w-dawn{
+  background:
+    radial-gradient(ellipse 95% 55% at 50% 8%, rgba(250,180,110,.55), rgba(240,140,80,.18) 45%, transparent 75%),
+    linear-gradient(180deg, rgba(255,190,120,.22) 0%, rgba(255,180,110,.08) 25%, transparent 55%),
+    radial-gradient(ellipse 40% 25% at 50% 3%, rgba(255,230,180,.6), transparent 70%);
+  mix-blend-mode:screen}
+
+/* SEA - blue wash + ripples */
+.w-sea{
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(80,130,160,.28) 55%, rgba(40,90,130,.42) 100%),
+    repeating-linear-gradient(92deg, transparent 0 18px, rgba(180,220,230,.12) 18px 19px, transparent 19px 55px),
+    repeating-linear-gradient(88deg, transparent 0 32px, rgba(120,180,210,.08) 32px 33px, transparent 33px 85px);
+  mix-blend-mode:multiply}
+.w-sea::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg, transparent 55%, rgba(100,160,190,.22) 100%);
+  mix-blend-mode:screen}
+
+/* HEAT - tropical redorange haze + vignette */
+.w-heat{
+  background:
+    radial-gradient(ellipse 80% 50% at 45% 65%, rgba(230,100,60,.18), transparent 70%),
+    radial-gradient(ellipse 65% 45% at 65% 50%, rgba(240,130,80,.14), transparent 70%),
+    linear-gradient(180deg, rgba(255,180,100,.1) 0%, transparent 30%, rgba(200,100,60,.1) 100%);
+  mix-blend-mode:multiply}
+.w-heat::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 50% at 50% 60%, transparent 50%, rgba(180,90,40,.22) 100%);
+  mix-blend-mode:multiply}
+
+/* ============ INK BRUSH LAYER ============ */
+#ink-layer{position:absolute;inset:0;pointer-events:none;z-index:6;overflow:hidden}
+.ink-brush{position:absolute;font-family:'Ma Shan Zheng','ZCOOL XiaoWei',serif;
+  user-select:none;pointer-events:none;line-height:.9;
+  opacity:0;transition:opacity 2.2s,transform 2.2s;letter-spacing:.02em;
+  text-shadow:0 2px 6px rgba(0,0,0,.15);
+  white-space:nowrap}
+.ink-brush.show{opacity:1}
+.ink-brush.v{writing-mode:vertical-rl}
+
+/* ============ TITLE ============ */
+#title-stage{position:absolute;inset:0;z-index:200;background:var(--paper);
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity 1.6s cubic-bezier(.5,0,.2,1),visibility 1.6s;
+  overflow:hidden;
+  background-image:
+    radial-gradient(ellipse 100% 80% at 50% 50%, transparent 0%, rgba(30,22,10,.08) 100%),
+    repeating-linear-gradient(0deg, rgba(120,95,50,.015) 0 2px, transparent 2px 4px)}
+#title-stage.gone{opacity:0;visibility:hidden;pointer-events:none}
+
+.title-inner{position:relative;text-align:center;max-width:960px;padding:0 3rem;z-index:5}
+.t-pretitle{font-size:.82rem;letter-spacing:.6em;color:var(--ink-faint);margin-bottom:2.2rem;padding-left:.6em}
+.t-main{font-family:'ZCOOL XiaoWei',serif;font-size:clamp(3.6rem,7.5vw,6rem);color:var(--ink);letter-spacing:.22em;line-height:1.2;font-weight:400}
+.t-main .mini{display:inline-block;font-size:.48em;vertical-align:middle;color:var(--ink-dim);margin:0 .3em;letter-spacing:0}
+.t-sub{margin-top:2.4rem;font-size:.96rem;color:var(--ink-soft);letter-spacing:.35em;padding-left:.35em}
+.t-byline{margin-top:.8rem;font-size:.74rem;color:var(--ink-faint);letter-spacing:.28em}
+.t-thesis{margin:3.4rem auto 0;max-width:660px;font-size:.98rem;line-height:2.2;color:var(--ink-soft);letter-spacing:.06em;text-align:justify;text-indent:2em;
+  border-top:1px solid rgba(30,22,10,.15);border-bottom:1px solid rgba(30,22,10,.15);padding:1.6rem 0}
+.enter{margin-top:2.8rem;display:inline-flex;align-items:center;gap:1.2rem;padding:.9em 2.8em;
+  background:transparent;border:1px solid var(--ink);color:var(--ink);
+  font-family:'Noto Serif SC',serif;font-size:.88rem;letter-spacing:.45em;cursor:pointer;
+  transition:all .5s;border-radius:0;font-weight:500}
+.enter:hover{background:var(--ink);color:var(--paper);letter-spacing:.6em}
+
+.t-bg-char{position:absolute;font-family:'ZCOOL XiaoWei',serif;color:var(--ink);opacity:.045;
+  font-size:30rem;pointer-events:none;user-select:none;line-height:.8;z-index:1}
+.t-bg-char.a{top:-3rem;left:-2rem}
+.t-bg-char.b{bottom:-5rem;right:-2rem;opacity:.035}
+
+.t-seal{position:absolute;left:3rem;top:50%;transform:translateY(-50%);writing-mode:vertical-rl;
+  font-size:.78rem;letter-spacing:.45em;color:var(--ink-faint);z-index:5}
+.t-seal.right{left:auto;right:3rem}
+
+/* ============ STAGE HUD ============ */
+#stage{position:absolute;inset:0;pointer-events:none;z-index:10;opacity:0;transition:opacity 1s}
+#stage.on{opacity:1}
+
+/* LEFT RAIL */
+#rail{position:absolute;left:0;top:0;bottom:0;width:92px;z-index:30;pointer-events:auto;
+  background:linear-gradient(to right, rgba(20,17,12,.65), rgba(20,17,12,.22) 70%, transparent);
+  display:flex;flex-direction:column;align-items:center;padding:2rem 0 11rem;justify-content:space-between;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.rail-brand{writing-mode:vertical-rl;font-family:'ZCOOL XiaoWei',serif;font-size:.94rem;color:var(--paper);opacity:.88;letter-spacing:.4em}
+.rail-chapters{display:flex;flex-direction:column;gap:1.3rem;position:relative}
+.rail-chapters::before{content:'';position:absolute;left:50%;top:-.2rem;bottom:-.2rem;width:1px;background:rgba(242,232,207,.18);transform:translateX(-.5px)}
+.rc{position:relative;width:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:.35rem 0}
+.rc-dot{width:9px;height:9px;border-radius:50%;background:rgba(242,232,207,.32);border:1px solid rgba(242,232,207,.45);transition:all .4s;z-index:2}
+.rc.active .rc-dot{background:var(--seal);border-color:var(--seal);box-shadow:0 0 0 5px rgba(168,58,56,.25);width:11px;height:11px}
+.rc.visited .rc-dot{background:rgba(242,232,207,.62)}
+.rc-label{position:absolute;left:48px;writing-mode:vertical-rl;font-family:'ZCOOL XiaoWei',serif;font-size:.88rem;color:var(--paper);opacity:0;letter-spacing:.28em;white-space:nowrap;transition:opacity .3s;pointer-events:none;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.rc:hover .rc-label,.rc.active .rc-label{opacity:.95}
+.rail-foot{writing-mode:vertical-rl;font-family:'ZCOOL XiaoWei',serif;font-size:.62rem;color:var(--paper);opacity:.42;letter-spacing:.6em}
+
+/* ============ TOP-RIGHT PLATE ============ */
+#plate{position:absolute;top:2.5rem;right:2.5rem;width:420px;max-width:38vw;z-index:30;color:var(--paper);pointer-events:auto;
+  transition:opacity .8s,transform .8s;
+  background:linear-gradient(135deg, rgba(20,17,12,.78), rgba(20,17,12,.48));
+  padding:1.5rem 1.8rem 1.4rem;border-left:2px solid var(--seal);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:0 4px 24px rgba(0,0,0,.35)}
+.pl-eyebrow{font-size:.68rem;letter-spacing:.55em;opacity:.72;margin-bottom:.6rem;font-weight:500}
+.pl-chapter{font-family:'ZCOOL XiaoWei',serif;font-size:3rem;line-height:1.1;letter-spacing:.06em;color:var(--paper);text-shadow:0 2px 14px rgba(0,0,0,.5);margin-bottom:.3rem;font-weight:400}
+.pl-chapter .numeral{font-size:.32em;color:var(--seal);vertical-align:top;letter-spacing:.2em;margin-right:.55em;font-family:'Noto Serif SC',serif;font-weight:300}
+.pl-period{font-size:.78rem;letter-spacing:.22em;color:var(--paper);opacity:.78;margin-bottom:1rem;font-weight:500}
+.pl-divider{width:48px;height:1px;background:var(--seal);margin-bottom:1rem;opacity:.9}
+.pl-narrative{font-size:.88rem;line-height:1.95;color:var(--paper);opacity:.92;letter-spacing:.03em;text-align:justify;font-weight:400;
+  text-shadow:0 1px 6px rgba(0,0,0,.45)}
+.pl-thought{margin-top:1.1rem;display:flex;gap:.9rem;align-items:center;font-size:.72rem;letter-spacing:.18em;opacity:.88}
+.pl-thought .tri{display:flex;gap:.35rem;align-items:center}
+.pl-thought .tri-bar{width:36px;height:3.5px;background:rgba(242,232,207,.16);border-radius:2px;overflow:hidden;position:relative}
+.pl-thought .tri-fill{position:absolute;inset:0;transform-origin:left;transform:scaleX(.3);transition:transform 1.2s cubic-bezier(.5,0,.2,1)}
+.pl-thought .tri .lbl{font-size:.74rem;color:var(--paper);opacity:.92;font-weight:500}
+
+/* ============ POEM FLOATS ============ */
+/* Triangle layout: primary on the left, secondary top-right, tertiary bottom-right */
+#poem-floats{position:absolute;left:120px;top:2.5rem;right:480px;bottom:230px;pointer-events:none;z-index:20}
+.poem-col{position:absolute;writing-mode:vertical-rl;text-orientation:mixed;
+  font-family:'ZCOOL XiaoWei',serif;color:var(--paper);
+  text-shadow:0 2px 18px rgba(0,0,0,.9), 0 0 6px rgba(0,0,0,.75);
+  opacity:0;
+  transition:opacity 1.8s,transform 1.8s;pointer-events:auto;cursor:help;
+  padding:.6rem .8rem;
+  background:linear-gradient(to left, rgba(20,17,12,.34), rgba(20,17,12,.08) 70%, transparent);}
+.poem-col.show{opacity:.96}
+.poem-col:hover{opacity:1;background:linear-gradient(to left, rgba(20,17,12,.5), rgba(20,17,12,.15) 70%, transparent)}
+.poem-col .pc-title{font-size:.78rem;color:var(--seal);letter-spacing:.22em;opacity:.95;margin-bottom:.6rem;font-family:'Noto Serif SC',serif;font-weight:500;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.poem-col .pc-body{white-space:pre;font-size:1.4rem;line-height:2.4;letter-spacing:.14em}
+/* primary: left side, large, vertically centered */
+.poem-col.primary{left:1%;top:50%;transform:translate(8px,-50%);max-height:92%}
+.poem-col.primary.show{transform:translate(0,-50%)}
+.poem-col.primary .pc-body{font-size:1.7rem;line-height:2.3;letter-spacing:.16em;color:#FFF5DE}
+.poem-col.primary .pc-title{font-size:.92rem}
+/* secondary: right top */
+.poem-col.secondary{right:2%;top:2%;left:auto;transform:translateX(8px)}
+.poem-col.secondary.show{transform:translateX(0)}
+.poem-col.secondary .pc-body{font-size:1.15rem;opacity:.9;line-height:2.2}
+/* tertiary: right bottom */
+.poem-col.tertiary{right:2%;bottom:2%;top:auto;left:auto;transform:translateX(8px)}
+.poem-col.tertiary.show{transform:translateX(0)}
+.poem-col.tertiary .pc-body{font-size:1.05rem;opacity:.78;line-height:2.1}
+
+/* ============ NAV BUTTONS ============ */
+#nav-btns{position:absolute;left:120px;bottom:210px;z-index:45;display:flex;gap:1rem;pointer-events:auto}
+.nav-btn{display:inline-flex;align-items:center;gap:.6em;padding:.7em 1.4em;
+  background:linear-gradient(135deg, rgba(20,17,12,.82), rgba(40,30,20,.6));
+  border:1px solid rgba(242,232,207,.35);
+  color:var(--paper);
+  font-family:'ZCOOL XiaoWei',serif;font-size:.95rem;letter-spacing:.28em;cursor:pointer;
+  transition:all .4s;backdrop-filter:blur(6px);
+  text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.nav-btn:hover{background:linear-gradient(135deg, rgba(168,58,56,.4), rgba(168,58,56,.2));border-color:var(--seal);color:#FFF5DE;transform:translateY(-2px)}
+.nav-btn:disabled{opacity:.28;cursor:not-allowed;transform:none}
+.nav-btn .arr{font-size:1.1em;opacity:.85;font-family:serif}
+
+/* ending trigger button (appears after ch6) */
+#goto-ending{position:absolute;left:50%;bottom:230px;transform:translateX(-50%);z-index:46;pointer-events:auto;
+  padding:1.1em 3em;
+  background:linear-gradient(135deg, rgba(168,58,56,.85), rgba(120,30,28,.9));
+  border:1.5px solid rgba(255,220,180,.6);
+  color:#FFF5DE;
+  font-family:'ZCOOL XiaoWei',serif;font-size:1.2rem;letter-spacing:.5em;
+  cursor:pointer;text-shadow:0 2px 8px rgba(0,0,0,.6);
+  box-shadow:0 0 40px rgba(168,58,56,.55),0 8px 30px rgba(0,0,0,.5);
+  opacity:0;visibility:hidden;transition:opacity 1.2s 1s,visibility 1.2s 1s,transform .4s,box-shadow .4s;
+  animation:pulseGlow 2.6s ease-in-out infinite}
+#goto-ending.on{opacity:1;visibility:visible}
+#goto-ending:hover{transform:translateX(-50%) translateY(-3px);box-shadow:0 0 60px rgba(168,58,56,.8),0 12px 40px rgba(0,0,0,.6)}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 40px rgba(168,58,56,.45),0 8px 30px rgba(0,0,0,.5)}50%{box-shadow:0 0 70px rgba(168,58,56,.8),0 8px 30px rgba(0,0,0,.5)}}
+
+/* ============ SEAL ============ */
+.stage-seal{position:absolute;right:2.5rem;bottom:15.5rem;z-index:35;width:72px;height:72px;opacity:0;transition:opacity 1.2s;pointer-events:none;
+  display:flex;align-items:center;justify-content:center}
+.stage-seal.on{opacity:.92}
+.stage-seal-box{width:100%;height:100%;background:var(--seal);color:var(--paper);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'ZCOOL XiaoWei',serif;font-size:.76rem;letter-spacing:.12em;line-height:1.3;
+  text-align:center;writing-mode:vertical-rl;padding:.35rem;
+  box-shadow:0 0 0 2px rgba(168,58,56,.35),inset 0 0 0 1px rgba(242,232,207,.35), 0 4px 20px rgba(0,0,0,.4);
+  transform:rotate(-3deg)}
+
+/* ============ RIBBON ============ */
+#ribbon{position:absolute;left:0;right:0;bottom:0;height:190px;z-index:40;pointer-events:none;
+  background:linear-gradient(to top,rgba(20,17,12,.96) 0%,rgba(20,17,12,.88) 55%,rgba(20,17,12,.0) 100%)}
+.rb-inner{position:relative;width:calc(100% - 92px);margin-left:92px;height:100%;padding:1.3rem 2.5rem 1.6rem}
+.rb-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.6rem;color:var(--paper)}
+.rb-title{font-size:.78rem;letter-spacing:.42em;opacity:.85;font-weight:500}
+.rb-legend{display:flex;gap:1.5rem;font-size:.7rem;letter-spacing:.14em;opacity:.9}
+.rb-legend .sw{display:inline-block;width:16px;height:2.5px;vertical-align:middle;margin-right:.5rem}
+.rb-legend .sw.lat{background:var(--seal)}
+.rb-legend .sw.spirit{background:linear-gradient(to right,var(--ru),var(--dao),var(--fo))}
+#rb-canvas{width:100%;height:105px;display:block}
+.rb-axis{display:flex;justify-content:space-between;margin-top:.25rem;font-size:.66rem;color:var(--paper);opacity:.55;letter-spacing:.16em;font-weight:500}
+.rb-axis span{flex:1;text-align:center}
+
+/* ============ UTAI BREAK ============ */
+#utai{position:absolute;inset:0;z-index:150;background:var(--void);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:opacity 1.2s,visibility 1.2s;pointer-events:none}
+#utai.on{opacity:1;visibility:visible}
+.utai-grid{position:absolute;inset:0;background-image:
+  repeating-linear-gradient(0deg,rgba(168,58,56,.05) 0 1px,transparent 1px 40px),
+  repeating-linear-gradient(90deg,rgba(168,58,56,.05) 0 1px,transparent 1px 40px)}
+.utai-content{position:relative;text-align:center;color:var(--paper);max-width:820px;padding:0 3rem}
+.utai-year{font-size:.82rem;letter-spacing:.65em;color:var(--seal);margin-bottom:2rem;opacity:.95;font-weight:500}
+.utai-title{font-family:'ZCOOL XiaoWei',serif;font-size:clamp(3rem,5.5vw,4.5rem);letter-spacing:.14em;line-height:1.3;color:var(--paper);margin-bottom:1.6rem;font-weight:400}
+.utai-title .em{color:var(--seal)}
+.utai-sub{font-size:.96rem;line-height:2.1;letter-spacing:.06em;color:var(--paper);opacity:.82;max-width:620px;margin:0 auto;text-align:justify;text-indent:2em}
+.utai-charge{margin-top:2rem;padding:1.2rem 1.8rem;border:1px solid rgba(168,58,56,.6);display:inline-block;
+  font-family:'ZCOOL XiaoWei',serif;font-size:1.1rem;letter-spacing:.16em;color:var(--paper);
+  background:linear-gradient(to right,rgba(168,58,56,.1),rgba(168,58,56,.03));
+  writing-mode:vertical-rl;height:180px;max-height:40vh}
+
+@keyframes tremor{0%,100%{transform:translate(0,0)}25%{transform:translate(-1px,1px)}50%{transform:translate(1px,-1px)}75%{transform:translate(-1px,-1px)}}
+.tremor{animation:tremor .18s infinite}
+
+/* ============ ENDING ============ */
+#ending{position:absolute;inset:0;z-index:120;background:radial-gradient(ellipse at 50% 60%,#1a1610 0%,#0a0805 100%);
+  opacity:0;visibility:hidden;transition:opacity 1.6s,visibility 1.6s;pointer-events:none;overflow:hidden}
+#ending.on{opacity:1;visibility:visible;pointer-events:auto}
+#ending-canvas{position:absolute;inset:0;width:100%;height:100%}
+.end-title{position:absolute;left:50%;top:3rem;transform:translateX(-50%);font-family:'ZCOOL XiaoWei',serif;
+  font-size:2rem;color:var(--paper);letter-spacing:.55em;opacity:.92;text-align:center;font-weight:400}
+.end-title .sub{display:block;font-size:.76rem;letter-spacing:.42em;color:var(--ink-faint);margin-top:.8rem;opacity:.85}
+
+.end-epitaph{position:absolute;right:5rem;top:38%;writing-mode:vertical-rl;font-family:'ZCOOL XiaoWei',serif;
+  font-size:1.4rem;line-height:2.5;letter-spacing:.22em;color:var(--paper);opacity:0;transition:opacity 2s;max-height:55vh}
+.end-epitaph.show{opacity:.94}
+.end-epitaph .sig{font-size:.72rem;letter-spacing:.18em;color:var(--seal);opacity:.95;margin-top:1.3rem;font-family:'Noto Serif SC',serif;font-weight:500}
+
+.end-thesis{position:absolute;left:5rem;bottom:5.5rem;max-width:400px;color:var(--paper);opacity:0;transition:opacity 2s 1s}
+.end-thesis.show{opacity:.88}
+.end-thesis .lab{font-size:.7rem;letter-spacing:.45em;color:var(--seal);margin-bottom:1rem;font-weight:500}
+.end-thesis .body{font-size:.9rem;line-height:2;letter-spacing:.06em;text-align:justify}
+.end-thesis .body em{font-style:normal;color:var(--seal);letter-spacing:.12em;font-weight:500}
+
+.end-restart{position:absolute;left:50%;bottom:2.5rem;transform:translateX(-50%);padding:.55em 2em;
+  background:transparent;border:1px solid rgba(242,232,207,.38);color:var(--paper);
+  font-family:'Noto Serif SC',serif;font-size:.78rem;letter-spacing:.38em;cursor:pointer;transition:opacity 2s 2s, border .4s, color .4s;opacity:0}
+.end-restart.show{opacity:.82}
+.end-restart:hover{border-color:var(--seal);color:var(--seal);opacity:1}
+
+/* ============ TWEAKS ============ */
+#tweaks{position:absolute;right:1.5rem;top:1.5rem;z-index:500;
+  background:rgba(20,17,12,.92);border:1px solid rgba(242,232,207,.22);backdrop-filter:blur(10px);
+  padding:1rem 1.2rem;color:var(--paper);font-size:.76rem;min-width:250px;
+  display:none;border-radius:2px}
+#tweaks.on{display:block}
+.tw-title{font-family:'ZCOOL XiaoWei',serif;font-size:1rem;letter-spacing:.22em;margin-bottom:.9rem;color:var(--seal)}
+.tw-row{margin-bottom:.7rem;display:flex;align-items:center;gap:.6rem;justify-content:space-between}
+.tw-row label{font-size:.72rem;letter-spacing:.1em;opacity:.88;flex:1}
+.tw-row input[type=range]{width:110px;accent-color:var(--seal)}
+.tw-row select,.tw-row input[type=color]{background:rgba(242,232,207,.08);color:var(--paper);border:1px solid rgba(242,232,207,.22);font-family:inherit;font-size:.7rem;padding:.25em .5em}
+.tw-btn{width:100%;padding:.5em;background:rgba(168,58,56,.14);border:1px solid rgba(168,58,56,.45);color:var(--paper);
+  font-family:inherit;font-size:.72rem;letter-spacing:.22em;cursor:pointer;margin-top:.3rem}
+.tw-btn:hover{background:rgba(168,58,56,.28)}
+
+/* ============ LOADER ============ */
+#loader{position:absolute;inset:0;z-index:400;background:var(--paper);display:flex;align-items:center;justify-content:center;
+  transition:opacity 1s,visibility 1s;font-size:.82rem;letter-spacing:.55em;color:var(--ink-dim);font-weight:500}
+#loader.gone{opacity:0;visibility:hidden}
+.load-dot{display:inline-block;width:6px;height:6px;background:var(--ink);border-radius:50%;margin:0 3px;opacity:.3}
+.load-dot.a{animation:dotp 1.2s infinite .0s}
+.load-dot.b{animation:dotp 1.2s infinite .2s}
+.load-dot.c{animation:dotp 1.2s infinite .4s}
+@keyframes dotp{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* POPUP */
+.mapboxgl-popup-content{background:rgba(240,228,197,.97)!important;border:1px solid rgba(30,22,10,.35)!important;
+  border-radius:0!important;padding:0!important;font-family:'Noto Serif SC',serif!important;
+  box-shadow:0 4px 28px rgba(0,0,0,.45)!important;max-width:280px!important;overflow:hidden}
+.mapboxgl-popup-tip{display:none!important}
+.pop{padding:.85rem 1rem .8rem;position:relative}
+.pop::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--seal)}
+.pop-year{font-size:.7rem;letter-spacing:.32em;color:var(--seal);margin-bottom:.25rem;font-weight:500}
+.pop-name{font-family:'ZCOOL XiaoWei',serif;font-size:1.2rem;color:var(--ink);margin-bottom:.35rem;letter-spacing:.06em}
+.pop-desc{font-size:.8rem;color:var(--ink-soft);line-height:1.7}
+
+/* MARKER */
+.evt-dot{width:12px;height:12px;border-radius:50%;background:var(--seal);box-shadow:0 0 0 2.5px rgba(240,228,197,.95),0 0 16px rgba(168,58,56,.7);cursor:pointer;transition:transform .3s}
+.evt-dot:hover{transform:scale(1.7)}
+.evt-dot.past{background:rgba(140,110,70,.85);box-shadow:0 0 0 1.5px rgba(242,232,207,.45);opacity:.72;width:9px;height:9px}
+.evt-label{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--paper);font-family:'ZCOOL XiaoWei',serif;font-size:.88rem;letter-spacing:.08em;white-space:nowrap;text-shadow:0 1px 8px rgba(0,0,0,.95),0 0 4px rgba(0,0,0,.85);pointer-events:none;opacity:.94}
+.evt-wrap{position:relative;display:flex;align-items:center}
+
+@media (max-width: 1100px){
+  #plate{width:340px;padding:1.2rem 1.4rem 1.1rem}
+  .pl-chapter{font-size:2.4rem}
+  #poem-floats{right:380px}
+}
+@media (max-width: 900px){
+  #plate{top:2rem;right:1.5rem;left:100px;width:auto;max-width:none}
+  .pl-chapter{font-size:2rem}
+  #poem-floats{left:100px;right:1.5rem;top:40%;bottom:14rem}
+  #ribbon{height:170px}
+  .rb-inner{margin-left:80px;padding:1rem 1.5rem}
+  #rail{width:80px}
+  #nav-btns{left:100px;bottom:195px}
+}
+</style>
+<style>.eudic-tippy-content-container[_ngcontent-ng-c2546567076]{max-width:250px!important}.eusoft-chrome-extension-popup-menu[_ngcontent-ng-c2546567076]{position:fixed;z-index:2147483647;top:50%}.eusoft-chrome-extension-popup-menu.eusoft-chrome-extension-popup-menu-left[_ngcontent-ng-c2546567076]{left:4px}.eusoft-chrome-extension-popup-menu.eusoft-chrome-extension-popup-menu-right[_ngcontent-ng-c2546567076]{right:4px}.eusoft-chrome-extension-mask-container[_ngcontent-ng-c2546567076]{background-color:transparent;position:fixed;top:0;right:0;bottom:0;left:0;z-index:2147483646}</style><style>.eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{position:fixed!important;bottom:50px!important;right:50px!important;border-radius:5px!important;box-shadow:0 6px 24px #00000014!important;z-index:2147483647!important}.eusoft-eudic-translate-failed-content-script[_ngcontent-ng-c3081775404]{border:1px solid #E8E8E8!important;background-color:#f8fafe!important}html.light-en   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #E8E8E8!important;background-color:#f8fafe!important}html.light-fr   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #E8E8E8!important;background-color:#f8fafe!important}html.light-de   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #E8E8E8!important;background-color:#f8fafe!important}html.light-es   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #E8E8E8!important;background-color:#f8fafe!important}html.dark-en   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #595959!important;background-color:#212125!important}html.dark-fr   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #595959!important;background-color:#212125!important}html.dark-de   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #595959!important;background-color:#212125!important}html.dark-es   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #595959!important;background-color:#212125!important}html.sepia-en   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #E8E8E8!important;background-color:#f8fafe!important}html.sepia-fr   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #E8E8E8!important;background-color:#f8fafe!important}html.sepia-de   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #E8E8E8!important;background-color:#f8fafe!important}html.sepia-es   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #E8E8E8!important;background-color:#f8fafe!important}html.green-en   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #E8E8E8!important;background-color:#f8fafe!important}html.green-fr   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #E8E8E8!important;background-color:#f8fafe!important}html.green-de   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #E8E8E8!important;background-color:#f8fafe!important}html.green-es   [_nghost-ng-c3081775404]   .eusoft-eudic-translate-failed-container[_ngcontent-ng-c3081775404]{border:1px solid #E8E8E8!important;background-color:#f8fafe!important}</style></head>
+<body>
+
+<div id="loader">
+  <span>载入山川舆图</span>
+  <span class="load-dot a"></span><span class="load-dot b"></span><span class="load-dot c"></span>
+</div>
+
+<div id="map"></div>
+<div id="map-veil"></div>
+
+<!-- weather -->
+<div id="weather">
+  <div class="w-layer w-dawn" id="w-dawn"></div>
+  <div class="w-layer w-mist" id="w-mist"></div>
+  <div class="w-layer w-rain" id="w-rain"></div>
+  <div class="w-layer w-snow" id="w-snow"></div>
+  <div class="w-layer w-moon" id="w-moon"></div>
+  <div class="w-layer w-sea" id="w-sea"></div>
+  <div class="w-layer w-heat" id="w-heat"></div>
+</div>
+
+<!-- ink calligraphy -->
+<div id="ink-layer"></div>
+
+<div id="stage">
+  <div id="rail">
+    <div class="rail-brand">一蓑烟雨任平生</div>
+    <div class="rail-chapters" id="rail-chapters"></div>
+    <div class="rail-foot">1037 — 1101</div>
+  </div>
+
+  <div id="plate">
+    <div class="pl-eyebrow" id="pl-eyebrow"></div>
+    <div class="pl-chapter" id="pl-chapter"></div>
+    <div class="pl-period" id="pl-period"></div>
+    <div class="pl-divider"></div>
+    <div class="pl-narrative" id="pl-narrative"></div>
+    <div class="pl-thought">
+      <span class="tri"><span class="lbl">儒</span><span class="tri-bar"><span class="tri-fill" id="tri-ru" style="background: var(--ru); transform: scaleX(0);"></span></span></span>
+      <span class="tri"><span class="lbl">道</span><span class="tri-bar"><span class="tri-fill" id="tri-dao" style="background: var(--dao); transform: scaleX(0);"></span></span></span>
+      <span class="tri"><span class="lbl">佛</span><span class="tri-bar"><span class="tri-fill" id="tri-fo" style="background: var(--fo); transform: scaleX(0);"></span></span></span>
+    </div>
+  </div>
+
+  <div id="poem-floats"></div>
+  <div class="stage-seal" id="stage-seal"><div class="stage-seal-box" id="stage-seal-box"></div></div>
+
+  <div id="nav-btns">
+    <button class="nav-btn" id="btn-prev" onclick="goto(currentChapter-1)"><span class="arr">⇠</span> 溯 行</button>
+    <button class="nav-btn" id="btn-next" onclick="goto(currentChapter+1)">继 往 <span class="arr">⇢</span></button>
+  </div>
+
+  <button id="goto-ending" onclick="showEnding()">入 生 命 星 图 · 观 其 一 生</button>
+
+  <div id="ribbon">
+    <div class="rb-inner">
+      <div class="rb-header">
+        <div class="rb-title">身 · 南下　／　心 · 上升</div>
+        <div class="rb-legend">
+          <span><span class="sw lat"></span>地理纬度 ↓</span>
+          <span><span class="sw spirit"></span>精神轨迹 ↑（儒→道→佛）</span>
+        </div>
+      </div>
+      <canvas id="rb-canvas" width="1348" height="105"></canvas>
+      <div class="rb-axis">
+        <span>1056</span><span>1069</span><span>1082</span><span>1095</span><span>1101</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="utai">
+  <div class="utai-grid"></div>
+  <div class="utai-content">
+    <div class="utai-year">元 丰 二 年 · 1 0 7 9</div>
+    <div class="utai-title tremor">乌 台 诗 案 <span class="em">／</span> 断 裂</div>
+    <div class="utai-sub">七月二十八日，御史台差官自汴京至湖州。二十余日囚于御史台狱，昼夜受讯，以诗文摘句为罪证。一百三十日后出狱，贬黄州团练副使。自此，那个意气少年消失了；东坡居士将要在长江边的荒坡上，重新生出一个人。</div>
+    <div class="utai-charge">讽 讪 朝 政 · 愚 弄 朝 廷 · 谤 讪 先 帝 · 罪 当 死</div>
+  </div>
+</div>
+
+<div id="ending">
+  <canvas id="ending-canvas"></canvas>
+  <div class="end-title">一 生 星 图<span class="sub">THE CONSTELLATION OF A LIFE</span></div>
+  <div class="end-epitaph" id="end-epitaph">
+    心似已灰之木<br>身如不系之舟<br>问汝平生功业<br>黄州 · 惠州 · 儋州
+    <div class="sig">— 自题金山画像 · 1101</div>
+  </div>
+  <div class="end-thesis" id="end-thesis">
+    <div class="lab">THESIS</div>
+    <div class="body">身体自眉山而至儋州，纬度由 <em>30°N</em> 坠至 <em>19°N</em>；笔墨自社稷治国而至空虚寂灭，境界由 <em>儒</em> 涌向 <em>佛</em>。<br><br>这两条轨迹在北宋的山河上交织——<em>越走越南，越写越高</em>。地图，是苏轼写给他自己的一首长诗。</div>
+  </div>
+  <button class="end-restart" id="end-restart" onclick="restart()">从 头 再 游</button>
+</div>
+
+<div id="title-stage">
+  <div class="t-bg-char a">东</div>
+  <div class="t-bg-char b">坡</div>
+  <div class="t-seal">北 宋 · 文 学 地 理</div>
+  <div class="t-seal right">苏 轼 · 一 〇 三 七 — 一 一 〇 一</div>
+  <div class="title-inner">
+    <div class="t-pretitle">一 幅 可 以 走 动 的 生 命</div>
+    <div class="t-main">一 蓑 烟 雨<span class="mini">·</span>任 平 生</div>
+    <div class="t-sub">苏 轼 漫 游 轨 迹 与 精 神 流 转</div>
+    <div class="t-byline">SU SHI · A GEOGRAPHY OF THE SOUL</div>
+    <div class="t-thesis">本作以 58 首诗词、25 个地理节点为基材，论证一个反向运动：身体自眉山而下儋州，纬度由北向南连续坠落；心笔自社稷功业而至空幻寂灭，境界由儒入道、由道入佛节节上升。地图不是舞台，地图是论据。</div>
+    <button class="enter" onclick="start()">入 画 →</button>
+  </div>
+</div>
+
+<div id="tweaks">
+  <div class="tw-title">调 参</div>
+  <div class="tw-row"><label>地形起伏</label><input type="range" id="tw-terrain" min="0" max="3" step="0.1" value="1.8"></div>
+  <div class="tw-row"><label>天气图层</label><input type="checkbox" id="tw-weather" checked=""></div>
+  <div class="tw-row"><label>墨迹文字</label><input type="checkbox" id="tw-ink" checked=""></div>
+  <div class="tw-row"><label>印朱色</label><input type="color" id="tw-seal" value="#A83A38"></div>
+  <button class="tw-btn" onclick="overview()">纵 览 全 程</button>
+</div>
+
+<script id="data-json" type="application/json">
+{
+  "chapters": [
+    {
+      "id":1,"numeral":"Ⅰ","title":"出川","period":"1056 — 1059","en":"LEAVING SICHUAN",
+      "center":[108.5,31.8],"zoom":5.0,"pitch":40,"bearing":18,
+      "bounds":[[99,26],[120,39]],
+      "weather":["dawn","mist"],
+      "ink":[{"c":"三峡","x":"22%","y":"42%","size":"11rem","rot":-6,"o":0.18,"v":false},
+             {"c":"蜀","x":"5%","y":"68%","size":"9rem","rot":-8,"o":0.14,"v":false}],
+      "ru":0.68,"dao":0.26,"fo":0.06,
+      "narrative":"嘉祐元年，二十岁的苏轼与父苏洵、弟苏辙出川应试。父子三人由眉山沿岷江入长江，穿三峡东下汴京。三峡惊涛初见，少年壮志和离乡惆怅一同翻涌 —— 那时他还不知道，这是一生中唯一一次真正回到四川的路。",
+      "seal":"三苏出峡",
+      "events":[
+        {"name":"眉山","year":"1056","lng":103.85,"lat":30.08,"desc":"故园 · 父子三人自此出川"},
+        {"name":"嘉州","year":"1059","lng":103.77,"lat":29.55,"desc":"舟发嘉州 — 从此离蜀"},
+        {"name":"三峡","year":"1059","lng":110.00,"lat":30.80,"desc":"初见大江大河"},
+        {"name":"江陵","year":"1059","lng":112.24,"lat":30.33,"desc":"三苏父子诗文结集"},
+        {"name":"襄阳","year":"1059","lng":112.14,"lat":32.04,"desc":"俯仰古今人物"},
+        {"name":"渑池","year":"1061","lng":111.76,"lat":34.77,"desc":"写下飞鸿踏雪"},
+        {"name":"汴京","year":"1057","lng":114.35,"lat":34.80,"desc":"欧阳修惊为奇才"}
+      ],
+      "poems":[
+        {"t":"和子由渑池怀旧","b":"人生到处知何似\n应似飞鸿踏雪泥\n泥上偶然留指爪\n鸿飞那复计东西","r":"primary","x":"8%","y":"3%"},
+        {"t":"入峡","b":"自昔怀清赏\n神游杳蔼间","r":"secondary","x":"52%","y":"6%"},
+        {"t":"过襄阳","b":"汉水连天白\n楚山当日明","r":"tertiary","x":"76%","y":"8%"}
+      ]
+    },
+    {
+      "id":2,"numeral":"Ⅱ","title":"京城与初仕","period":"1060 — 1071","en":"THE COURT",
+      "center":[113.5,33.5],"zoom":4.8,"pitch":36,"bearing":-6,
+      "bounds":[[101,26],[124,40]],
+      "weather":["dawn"],
+      "ink":[{"c":"京","x":"55%","y":"55%","size":"13rem","rot":0,"o":0.17,"v":false},
+             {"c":"湖","x":"78%","y":"22%","size":"8rem","rot":-4,"o":0.14,"v":false}],
+      "ru":0.56,"dao":0.34,"fo":0.10,
+      "narrative":"凤翔签判是他的第一个正式官职。十年间经丧父、还朝、与王安石政见不合，自请外任。从凤翔的喜雨亭到杭州的西湖，他的笔由朝堂民生，悄悄向江南山水偏移。政治上的第一次受挫，也让道佛之思初次浮现。",
+      "seal":"喜雨亭",
+      "events":[
+        {"name":"汴京","year":"1060","lng":114.35,"lat":34.80,"desc":"回京候任"},
+        {"name":"凤翔","year":"1062","lng":107.39,"lat":34.52,"desc":"初仕 — 喜雨亭 / 凌虚台"},
+        {"name":"汴京","year":"1065","lng":114.35,"lat":34.80,"desc":"父丧 · 政见冲突"},
+        {"name":"杭州","year":"1071","lng":120.15,"lat":30.25,"desc":"通判 — 初遇西湖"}
+      ],
+      "poems":[
+        {"t":"饮湖上初晴后雨","b":"水光潋滟晴方好\n山色空蒙雨亦奇\n欲把西湖比西子\n淡妆浓抹总相宜","r":"primary","x":"8%","y":"3%"},
+        {"t":"望湖楼醉书","b":"黑云翻墨未遮山\n白雨跳珠乱入船","r":"secondary","x":"30%","y":"3%"},
+        {"t":"六和塔","b":"空山新雨后\n钟声澹无痕","r":"tertiary","x":"50%","y":"6%"}
+      ]
+    },
+    {
+      "id":3,"numeral":"Ⅲ","title":"辗转外任","period":"1071 — 1079","en":"FOUR PREFECTURES",
+      "center":[118.2,34.0],"zoom":5.0,"pitch":34,"bearing":4,
+      "bounds":[[108,25],[126,40]],
+      "weather":["moon"],
+      "ink":[{"c":"月","x":"12%","y":"40%","size":"13rem","rot":0,"o":0.2,"v":false},
+             {"c":"猎","x":"34%","y":"68%","size":"9rem","rot":-8,"o":0.15,"v":false}],
+      "ru":0.54,"dao":0.42,"fo":0.04,
+      "narrative":"杭州—密州—徐州—湖州。密州出猎的豪放、中秋望月的婵娟、徐州抗洪的血性，是他儒家能量最后一次全面爆发。而在笔锋之间，《超然台记》已悄然出现。八年奔波之末，乌台诗案的阴影正从御史台逼近湖州。",
+      "seal":"超然台",
+      "events":[
+        {"name":"杭州","year":"1072","lng":120.15,"lat":30.25,"desc":"望湖楼醉书 · 西湖"},
+        {"name":"密州","year":"1075","lng":119.40,"lat":35.99,"desc":"出猎 · 记梦 · 水调歌头"},
+        {"name":"徐州","year":"1077","lng":117.28,"lat":34.26,"desc":"抗洪七十余日"},
+        {"name":"湖口","year":"1079","lng":116.22,"lat":29.74,"desc":"石钟山记"},
+        {"name":"湖州","year":"1079","lng":120.09,"lat":30.87,"desc":"七月二十八日 — 被逮"}
+      ],
+      "poems":[
+        {"t":"水调歌头·丙辰中秋","b":"明月几时有\n把酒问青天\n不知天上宫阙\n今夕是何年\n但愿人长久\n千里共婵娟","r":"primary","x":"8%","y":"1%"},
+        {"t":"江城子·密州出猎","b":"老夫聊发少年狂\n左牵黄\n右擎苍","r":"secondary","x":"32%","y":"3%"},
+        {"t":"江城子·记梦","b":"十年生死两茫茫\n不思量\n自难忘","r":"tertiary","x":"52%","y":"6%"}
+      ]
+    },
+    {
+      "id":4,"numeral":"Ⅳ","title":"黄州突围","period":"1080 — 1084","en":"THE HUANGZHOU TURN",
+      "center":[114.87,30.45],"zoom":8.5,"pitch":55,"bearing":-16,
+      "bounds":[[113,28.5],[117,32.2]],
+      "weather":["rain","mist"],
+      "ink":[{"c":"一蓑烟雨","x":"6%","y":"70%","size":"6rem","rot":0,"o":0.18,"v":true},
+             {"c":"赤壁","x":"56%","y":"55%","size":"12rem","rot":-6,"o":0.2,"v":false},
+             {"c":"东坡","x":"68%","y":"8%","size":"10rem","rot":-4,"o":0.16,"v":false}],
+      "ru":0.18,"dao":0.53,"fo":0.29,
+      "narrative":"出狱贬黄州团练副使 —— 有官衔，无薪俸，无实权。他在城外东坡开垦荒地，自号东坡居士。地理的空间骤然压缩为一江、一坡、一月；精神的空间却无限展开。《赤壁怀古》、前后赤壁赋、《定风波》—— 中国文学的几处高峰，都在这四年里迸发。",
+      "seal":"东坡居士",
+      "events":[
+        {"name":"黄州","year":"1080","lng":114.87,"lat":30.45,"desc":"初到黄州 · 卜算子"},
+        {"name":"东坡","year":"1081","lng":114.88,"lat":30.44,"desc":"开垦东坡 — 号由此立"},
+        {"name":"沙湖","year":"1082","lng":114.90,"lat":30.43,"desc":"竹杖芒鞋 · 一蓑烟雨"},
+        {"name":"赤壁","year":"1082","lng":114.86,"lat":30.46,"desc":"大江东去 · 清风明月"},
+        {"name":"承天寺","year":"1083","lng":114.87,"lat":30.46,"desc":"但少闲人如吾两人者耳"}
+      ],
+      "poems":[
+        {"t":"定风波","b":"莫听穿林打叶声\n何妨吟啸且徐行\n竹杖芒鞋轻胜马\n谁怕\n一蓑烟雨任平生","r":"primary","x":"8%","y":"2%"},
+        {"t":"念奴娇·赤壁怀古","b":"大江东去\n浪淘尽\n千古风流人物","r":"secondary","x":"30%","y":"3%"},
+        {"t":"前赤壁赋","b":"惟江上之清风\n与山间之明月","r":"tertiary","x":"48%","y":"5%"}
+      ]
+    },
+    {
+      "id":5,"numeral":"Ⅴ","title":"南渡岭南","period":"1094 — 1100","en":"ACROSS THE SEA",
+      "center":[112,22.5],"zoom":4.5,"pitch":30,"bearing":0,
+      "bounds":[[102,16],[122,30]],
+      "weather":["heat","mist"],
+      "ink":[{"c":"荔","x":"62%","y":"50%","size":"11rem","rot":-4,"o":0.19,"v":false},
+             {"c":"海","x":"18%","y":"70%","size":"13rem","rot":0,"o":0.2,"v":false}],
+      "ru":0.08,"dao":0.59,"fo":0.33,
+      "narrative":"新党再起，一贬再贬。从定州到惠州，再到海南儋州 —— 北宋刑制，渡海赴琼仅次于死罪。年近花甲，他却把流放写成奇绝的旅游：日啖荔枝三百颗；松风亭前忽悟此间有甚歇不得处；儋耳蛮荒教子弟读书。他把被迫的流放，活成了主动的归隐。",
+      "seal":"日啖荔枝",
+      "events":[
+        {"name":"定州","year":"1093","lng":114.99,"lat":38.52,"desc":"短暂回朝后再遭贬"},
+        {"name":"惠州","year":"1094","lng":114.42,"lat":23.11,"desc":"日啖荔枝 · 和陶归园"},
+        {"name":"雷州","year":"1097","lng":110.08,"lat":20.93,"desc":"与弟苏辙诀别"},
+        {"name":"琼州海峡","year":"1097","lng":110.30,"lat":20.00,"desc":"渡海赴儋"},
+        {"name":"儋州","year":"1097","lng":109.58,"lat":19.52,"desc":"桄榔庵 · 教琼州子弟"}
+      ],
+      "poems":[
+        {"t":"食荔支","b":"罗浮山下四时春\n卢橘杨梅次第新\n日啖荔枝三百颗\n不辞长作岭南人","r":"primary","x":"8%","y":"2%"},
+        {"t":"记游松风亭","b":"此间有甚么歇不得处\n由是如挂钩之鱼\n忽得解脱","r":"secondary","x":"32%","y":"3%"},
+        {"t":"和陶归园田居","b":"穷猿既投林\n疲马初解鞍","r":"tertiary","x":"52%","y":"6%"}
+      ]
+    },
+    {
+      "id":6,"numeral":"Ⅵ","title":"北归 · 终章","period":"1100 — 1101","en":"RETURN",
+      "center":[116.5,28.5],"zoom":4.7,"pitch":26,"bearing":6,
+      "bounds":[[106,17],[124,36]],
+      "weather":["sea","dawn"],
+      "ink":[{"c":"澄","x":"58%","y":"52%","size":"13rem","rot":0,"o":0.2,"v":false},
+             {"c":"归","x":"14%","y":"68%","size":"10rem","rot":-5,"o":0.17,"v":false}],
+      "ru":0.14,"dao":0.34,"fo":0.52,
+      "narrative":"徽宗继位大赦。六十四岁的他从海南北归，渡海时写下 \"天容海色本澄清\"。百姓夹道相迎。在镇江金山寺见到自己年轻时的画像，他写下一生的总结：问汝平生功业，黄州、惠州、儋州。走到常州，七月二十八日那一天 —— 那个他二十二年前在湖州被捕的同一个日子 —— 他病逝了。轨迹没能回到眉山，一生画出一个不闭合的环。",
+      "seal":"澄 澈",
+      "events":[
+        {"name":"琼州海峡","year":"1100","lng":110.30,"lat":20.00,"desc":"渡海北归 · 澄清"},
+        {"name":"广州","year":"1100","lng":113.26,"lat":23.13,"desc":"百姓夹道欢迎"},
+        {"name":"赣州","year":"1100","lng":114.93,"lat":25.83,"desc":"题画 · 秋景"},
+        {"name":"金山","year":"1101","lng":119.43,"lat":32.22,"desc":"见旧日画像 · 灰木不系舟"},
+        {"name":"常州","year":"1101","lng":119.97,"lat":31.77,"desc":"七月二十八日 · 终"}
+      ],
+      "poems":[
+        {"t":"自题金山画像","b":"心似已灰之木\n身如不系之舟\n问汝平生功业\n黄州·惠州·儋州","r":"primary","x":"8%","y":"2%"},
+        {"t":"六月二十日夜渡海","b":"九死南荒吾不恨\n兹游奇绝冠平生","r":"secondary","x":"30%","y":"3%"},
+        {"t":"答径山琳长老","b":"平生文字为吾累\n此去声名不厌低","r":"tertiary","x":"50%","y":"5%"}
+      ]
+    }
+  ]
+}
+</script>
+
+<script id="works-json" type="application/json">
+[
+{"y":1057,"ch":1,"loc":"汴京","lng":114.35,"lat":34.80,"t":"刑赏忠厚之至论","ru":5,"dao":0,"fo":0},
+{"y":1057,"ch":1,"loc":"汴京","lng":114.35,"lat":34.80,"t":"留侯论","ru":5,"dao":0,"fo":0},
+{"y":1059,"ch":1,"loc":"江陵","lng":112.24,"lat":30.33,"t":"南行前集叙","ru":3,"dao":2,"fo":0},
+{"y":1059,"ch":1,"loc":"三峡","lng":110.00,"lat":30.80,"t":"入峡","ru":4,"dao":1,"fo":0},
+{"y":1059,"ch":1,"loc":"嘉州","lng":103.77,"lat":29.55,"t":"初发嘉州","ru":3,"dao":2,"fo":0},
+{"y":1059,"ch":1,"loc":"彭山","lng":103.85,"lat":29.70,"t":"峨眉山月歌","ru":1,"dao":4,"fo":0},
+{"y":1059,"ch":1,"loc":"襄阳","lng":112.14,"lat":32.04,"t":"过襄阳","ru":4,"dao":1,"fo":0},
+{"y":1061,"ch":1,"loc":"渑池","lng":111.76,"lat":34.77,"t":"和子由渑池怀旧","ru":2,"dao":1,"fo":2},
+{"y":1062,"ch":2,"loc":"凤翔","lng":107.39,"lat":34.52,"t":"喜雨亭记","ru":5,"dao":0,"fo":0},
+{"y":1063,"ch":2,"loc":"凤翔","lng":107.39,"lat":34.52,"t":"凌虚台记","ru":3,"dao":2,"fo":0},
+{"y":1071,"ch":2,"loc":"杭州","lng":120.15,"lat":30.25,"t":"六和塔","ru":1,"dao":1,"fo":4},
+{"y":1072,"ch":2,"loc":"杭州","lng":120.15,"lat":30.25,"t":"望湖楼醉书","ru":1,"dao":4,"fo":0},
+{"y":1073,"ch":2,"loc":"杭州","lng":120.15,"lat":30.25,"t":"饮湖上初晴后雨","ru":1,"dao":4,"fo":0},
+{"y":1075,"ch":3,"loc":"密州","lng":119.40,"lat":35.99,"t":"江城子·密州出猎","ru":5,"dao":0,"fo":0},
+{"y":1075,"ch":3,"loc":"密州","lng":119.40,"lat":35.99,"t":"江城子·记梦","ru":2,"dao":0,"fo":3},
+{"y":1076,"ch":3,"loc":"密州","lng":119.40,"lat":35.99,"t":"超然台记","ru":2,"dao":4,"fo":0},
+{"y":1076,"ch":3,"loc":"密州","lng":119.40,"lat":35.99,"t":"水调歌头","ru":3,"dao":3,"fo":0},
+{"y":1077,"ch":3,"loc":"徐州","lng":117.28,"lat":34.26,"t":"河复","ru":5,"dao":0,"fo":0},
+{"y":1078,"ch":3,"loc":"徐州","lng":117.28,"lat":34.26,"t":"放鹤亭记","ru":1,"dao":4,"fo":0},
+{"y":1079,"ch":3,"loc":"湖口","lng":116.22,"lat":29.74,"t":"石钟山记","ru":3,"dao":2,"fo":0},
+{"y":1079,"ch":3,"loc":"湖州","lng":120.09,"lat":30.87,"t":"湖州谢上表","ru":5,"dao":0,"fo":0},
+{"y":1080,"ch":4,"loc":"黄州","lng":114.87,"lat":30.45,"t":"初到黄州","ru":3,"dao":3,"fo":0},
+{"y":1080,"ch":4,"loc":"黄州","lng":114.87,"lat":30.45,"t":"卜算子·缺月挂疏桐","ru":0,"dao":2,"fo":4},
+{"y":1081,"ch":4,"loc":"黄州","lng":114.87,"lat":30.45,"t":"定惠院寓居月夜偶出","ru":1,"dao":2,"fo":3},
+{"y":1081,"ch":4,"loc":"东坡","lng":114.88,"lat":30.44,"t":"东坡八首","ru":3,"dao":3,"fo":0},
+{"y":1082,"ch":4,"loc":"黄州","lng":114.87,"lat":30.45,"t":"寒食雨二首","ru":2,"dao":1,"fo":3},
+{"y":1082,"ch":4,"loc":"沙湖","lng":114.90,"lat":30.43,"t":"定风波","ru":0,"dao":4,"fo":2},
+{"y":1082,"ch":4,"loc":"赤壁","lng":114.86,"lat":30.46,"t":"念奴娇·赤壁怀古","ru":2,"dao":2,"fo":2},
+{"y":1082,"ch":4,"loc":"赤壁","lng":114.86,"lat":30.46,"t":"前赤壁赋","ru":0,"dao":5,"fo":1},
+{"y":1082,"ch":4,"loc":"赤壁","lng":114.86,"lat":30.46,"t":"后赤壁赋","ru":0,"dao":3,"fo":3},
+{"y":1083,"ch":4,"loc":"承天寺","lng":114.87,"lat":30.46,"t":"记承天寺夜游","ru":1,"dao":4,"fo":1},
+{"y":1082,"ch":4,"loc":"临皋","lng":114.87,"lat":30.45,"t":"临江仙·夜归临皋","ru":1,"dao":4,"fo":1},
+{"y":1094,"ch":5,"loc":"惠州","lng":114.42,"lat":23.11,"t":"初到惠州","ru":1,"dao":4,"fo":0},
+{"y":1094,"ch":5,"loc":"惠州","lng":114.42,"lat":23.11,"t":"记游松风亭","ru":0,"dao":3,"fo":3},
+{"y":1094,"ch":5,"loc":"惠州","lng":114.42,"lat":23.11,"t":"和陶归园田居","ru":0,"dao":5,"fo":0},
+{"y":1094,"ch":5,"loc":"惠州","lng":114.42,"lat":23.11,"t":"朝云诗","ru":1,"dao":1,"fo":4},
+{"y":1095,"ch":5,"loc":"惠州","lng":114.42,"lat":23.11,"t":"食荔支","ru":0,"dao":5,"fo":0},
+{"y":1097,"ch":5,"loc":"儋州","lng":109.58,"lat":19.52,"t":"试笔自书","ru":0,"dao":2,"fo":4},
+{"y":1097,"ch":5,"loc":"儋州","lng":109.58,"lat":19.52,"t":"儋耳山","ru":0,"dao":4,"fo":1},
+{"y":1098,"ch":5,"loc":"儋州","lng":109.58,"lat":19.52,"t":"被酒独行","ru":2,"dao":3,"fo":0},
+{"y":1099,"ch":5,"loc":"儋州","lng":109.58,"lat":19.52,"t":"夜烧松明火","ru":0,"dao":4,"fo":1},
+{"y":1100,"ch":5,"loc":"儋州","lng":109.58,"lat":19.52,"t":"减字木兰花·立春","ru":1,"dao":4,"fo":0},
+{"y":1100,"ch":6,"loc":"琼州海峡","lng":110.30,"lat":20.00,"t":"六月二十日夜渡海","ru":2,"dao":3,"fo":1},
+{"y":1101,"ch":6,"loc":"金山","lng":119.43,"lat":32.22,"t":"自题金山画像","ru":1,"dao":2,"fo":3},
+{"y":1101,"ch":6,"loc":"南京","lng":118.80,"lat":32.06,"t":"病中游祖堂山","ru":0,"dao":1,"fo":4},
+{"y":1101,"ch":6,"loc":"常州","lng":119.97,"lat":31.77,"t":"答径山琳长老","ru":0,"dao":0,"fo":5},
+{"y":1101,"ch":6,"loc":"常州","lng":119.97,"lat":31.77,"t":"答钱济明书","ru":0,"dao":0,"fo":5}
+]
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
+<script src="app_改进版.js"></script>
+
+
+</body><eusoft-chrome-extension-root-en id="eusoft-chrome-extension-id-en" _nghost-ng-c2546567076="" ng-version="18.2.13"><template _ngcontent-ng-c2546567076=""></template><!----><!----><!----><app-word-hint-render _ngcontent-ng-c2546567076="" _nghost-ng-c3319869249=""><template _ngcontent-ng-c3319869249=""></template><!----><!----></app-word-hint-render><app-translate-render _ngcontent-ng-c2546567076="" _nghost-ng-c2607817495=""><template _ngcontent-ng-c2607817495=""></template><!----><translate-analyzer _ngcontent-ng-c2607817495=""><template></template></translate-analyzer></app-translate-render><app-capture-word _ngcontent-ng-c2546567076="" class="eusoft-chrome-extension-capture-word-container ng-tns-c2615027859-0 ng-star-inserted"></app-capture-word><app-translate-failed-retry _ngcontent-ng-c2546567076="" _nghost-ng-c3081775404=""><!----></app-translate-failed-retry><!----><!----></eusoft-chrome-extension-root-en></html>
