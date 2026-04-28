@@ -191,10 +191,21 @@ function initMap(){
 
   map.addControl(new mapboxgl.AttributionControl({compact:true}), 'bottom-right');
 
-  map.on('load', ()=>{
-    addTrailSources();
+  let mapReady = false;
+  const finishMapLoad = ()=>{
+    if(mapReady) return;
+    mapReady = true;
+    try{ addTrailSources(); }catch(e){ console.warn('trail init skipped', e); }
     document.getElementById('loader').classList.add('gone');
+  };
+
+  map.on('load', finishMapLoad);
+  map.on('idle', finishMapLoad);
+  map.on('error', e=>{
+    console.warn('map resource error', e && e.error ? e.error : e);
+    setTimeout(finishMapLoad, 800);
   });
+  setTimeout(finishMapLoad, 5000);
   map.on('style.load', ()=>{
     try{ map.setTerrain({source:'mapbox-dem', exaggeration:TWEAKS.terrainExaggeration}); }catch(e){}
   });
