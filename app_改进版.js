@@ -1,5 +1,5 @@
 // ============ APP ============
-mapboxgl.accessToken = ''; 
+mapboxgl.accessToken = window.MAPBOX_TOKEN || ''; 
 
 const DATA = JSON.parse(document.getElementById('data-json').textContent);
 const WORKS = JSON.parse(document.getElementById('works-json').textContent);
@@ -33,26 +33,118 @@ const ALL_EVENT_COORDS = (function(){
 function buildAncientStyle(){
   return {
     version: 8,
-    name: 'ancient-deploy-osm',
+    name: 'ancient',
+    glyphs: 'mapbox://fonts/mapbox/{fontstack}/{range}.pbf',
     sources: {
-      osm: {
-        type: 'raster',
-        tiles: [
-          'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
-        ],
-        tileSize: 256,
-        attribution: '&copy; OpenStreetMap contributors'
+      streets: {
+        type: 'vector',
+        url: 'mapbox://mapbox.mapbox-streets-v8'
+      },
+      terrain: {
+        type: 'vector',
+        url: 'mapbox://mapbox.mapbox-terrain-v2'
+      },
+      'mapbox-dem': {
+        type: 'raster-dem',
+        url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+        tileSize: 512, maxzoom: 14
       }
     },
+    terrain: { source: 'mapbox-dem', exaggeration: TWEAKS.terrainExaggeration },
     layers: [
-      { id: 'paper', type: 'background', paint: { 'background-color': '#E8D9B6' } },
-      { id: 'osm-base', type: 'raster', source: 'osm', paint: {
-        'raster-opacity': 0.78,
-        'raster-saturation': -0.45,
-        'raster-contrast': -0.05,
-        'raster-brightness-min': 0.1,
-        'raster-brightness-max': 0.95
-      } }
+      // Paper land base — warm xuan-paper
+      { id: 'bg', type: 'background',
+        paint: { 'background-color': '#E8D9B6' } },
+
+      // Subtle vegetation tint — only forests, gentle, won't muddy the topography
+      { id: 'landcover-wood', type: 'fill', source: 'streets', 'source-layer': 'landcover',
+        filter: ['==',['get','class'],'wood'],
+        paint: {
+          'fill-color': '#9DB37A',
+          'fill-opacity': 0.32
+        }
+      },
+
+      // Primary hillshade — clear, warm, v4-style topo shading
+      { id: 'hillshade', type: 'hillshade', source: 'mapbox-dem',
+        paint: {
+          'hillshade-exaggeration': 0.5,
+          'hillshade-shadow-color': '#5B4A30',
+          'hillshade-highlight-color': '#F2E8CF',
+          'hillshade-accent-color': '#7A8C5E',
+          'hillshade-illumination-direction': 315,
+          'hillshade-illumination-anchor': 'viewport'
+        }
+      },
+
+      // Secondary hillshade — soft greenish accent on shaded slopes (gives terrain colour without obscuring)
+      { id: 'hillshade-tint', type: 'hillshade', source: 'mapbox-dem',
+        paint: {
+          'hillshade-exaggeration': 0.2,
+          'hillshade-shadow-color': 'rgba(60,90,55,0.55)',
+          'hillshade-highlight-color': 'rgba(0,0,0,0)',
+          'hillshade-accent-color': 'rgba(110,140,90,0.4)',
+          'hillshade-illumination-direction': 315,
+          'hillshade-illumination-anchor': 'viewport'
+        }
+      },
+
+      // Contour lines — subtle elevation
+      { id: 'contour', type: 'line', source: 'terrain', 'source-layer': 'contour',
+        paint: {
+          'line-color': '#9A8456',
+          'line-width': ['interpolate',['linear'],['zoom'],6,0.15,10,0.4,14,0.7],
+          'line-opacity': 0.22
+        }
+      },
+
+      // Ocean only — keep coastlines visible, drop inland lakes/reservoirs to reduce clutter
+      { id: 'water-ocean', type: 'fill', source: 'streets', 'source-layer': 'water',
+        filter: ['==',['get','class'],'ocean'],
+        paint: {
+          'fill-color': ['interpolate',['linear'],['zoom'],3,'#7FA8BE',7,'#5E8EAD',11,'#4A7A95'],
+          'fill-opacity': 0.92
+        }
+      },
+
+      // Yangtze only — match common name variants in the basemap's name fields
+      { id: 'waterway-yangtze', type: 'line', source: 'streets', 'source-layer': 'waterway',
+        filter: ['any',
+          ['in','长江', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','Yangtze', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Chang Jiang', ['coalesce',['get','name'],['get','name_en'],'']],
+          ['in','Jinsha', ['coalesce',['get','name'],['get','name_en'],'']]
+        ],
+        paint: {
+          'line-color': '#3D6E88',
+          'line-width': ['interpolate',['linear'],['zoom'],3,1.4,7,3.2,12,6.5],
+          'line-opacity': 0.92
+        },
+        layout: { 'line-cap': 'round', 'line-join': 'round' }
+      },
+
+      // National boundary
+      { id: 'admin-boundary', type: 'line', source: 'streets', 'source-layer': 'admin',
+        filter: ['all', ['==',['get','admin_level'],0], ['==',['get','maritime'],'false']],
+        paint: {
+          'line-color': '#6B4A2E',
+          'line-width': ['interpolate',['linear'],['zoom'],3,0.6,8,1.1,12,1.6],
+          'line-opacity': 0.45,
+          'line-dasharray': [3,2]
+        }
+      },
+      { id: 'admin-subnational', type: 'line', source: 'streets', 'source-layer': 'admin',
+        filter: ['==',['get','admin_level'],1],
+        paint: {
+          'line-color': '#8F7D5E',
+          'line-width': ['interpolate',['linear'],['zoom'],4,0.2,10,0.5],
+          'line-opacity': 0.3,
+          'line-dasharray': [1,3]
+        }
+      },
+
+      // No place_label layers — labels come only from custom event markers,
+      // so unrelated regions still show terrain but no toponyms.
     ]
   };
 }
@@ -99,20 +191,10 @@ function initMap(){
 
   map.addControl(new mapboxgl.AttributionControl({compact:true}), 'bottom-right');
 
-  let mapReady = false;
-  const finishMapLoad = ()=>{
-    if(mapReady) return;
-    mapReady = true;
-    try{ addTrailSources(); }catch(e){ console.warn('trail init skipped', e); }
+  map.on('load', ()=>{
+    addTrailSources();
     document.getElementById('loader').classList.add('gone');
-  };
-
-  map.on('load', finishMapLoad);
-  map.on('error', e=>{
-    console.warn('map resource error', e && e.error ? e.error : e);
-    setTimeout(finishMapLoad, 600);
   });
-  setTimeout(finishMapLoad, 4500);
   map.on('style.load', ()=>{
     try{ map.setTerrain({source:'mapbox-dem', exaggeration:TWEAKS.terrainExaggeration}); }catch(e){}
   });

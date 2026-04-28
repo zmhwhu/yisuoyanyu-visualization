@@ -1,0 +1,1 @@
+window.MAPBOX_TOKEN = '';
