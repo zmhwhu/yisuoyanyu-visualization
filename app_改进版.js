@@ -31,32 +31,7 @@ const ALL_EVENT_COORDS = (function(){
 // green mountains (via hillshade tinted), blue rivers, pale paper land,
 // key toponyms bold, others faded
 function buildAncientStyle(){
-  return {
-    version: 8,
-    name: 'ancient-tokenless',
-    sources: {
-      osm: {
-        type: 'raster',
-        tiles: [
-          'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        ],
-        tileSize: 256,
-        attribution: '&copy; OpenStreetMap contributors'
-      }
-    },
-    layers: [
-      { id: 'paper', type: 'background', paint: { 'background-color': '#E8D9B6' } },
-      { id: 'osm-base', type: 'raster', source: 'osm', paint: {
-        'raster-opacity': 0.72,
-        'raster-saturation': -0.55,
-        'raster-contrast': -0.08,
-        'raster-brightness-min': 0.08,
-        'raster-brightness-max': 0.9
-      } }
-    ]
-  };
+  return 'https://tiles.openfreemap.org/styles/liberty';
 }
 
 let map;

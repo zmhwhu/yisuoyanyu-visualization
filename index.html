@@ -1,11 +1,12 @@
-﻿<!DOCTYPE html><html data-src-ver="10e4f721" lang="zh-CN"><head>
+<!DOCTYPE html><html data-src-ver="10e4f721" lang="zh-CN"><head>
 
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>涓€钃戠儫闆ㄤ换骞崇敓 路 鑻忚郊婕父</title>
-<script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
-<link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+<title>一蓑烟雨任平生 · 苏轼漫游</title>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script>window.mapboxgl = maplibregl;</script>
 <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&amp;family=Noto+Serif+SC:wght@300;400;500;600;700;900&amp;family=ZCOOL+XiaoWei&amp;family=ZCOOL+QingKe+HuangYou&amp;family=Long+Cang&amp;display=swap" rel="stylesheet">
 <style>
 :root{
@@ -399,7 +400,7 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 <body>
 
 <div id="loader">
-  <span>杞藉叆灞卞窛鑸嗗浘</span>
+  <span>载入山川舆图</span>
   <span class="load-dot a"></span><span class="load-dot b"></span><span class="load-dot c"></span>
 </div>
 
@@ -422,9 +423,9 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 
 <div id="stage">
   <div id="rail">
-    <div class="rail-brand">涓€钃戠儫闆ㄤ换骞崇敓</div>
+    <div class="rail-brand">一蓑烟雨任平生</div>
     <div class="rail-chapters" id="rail-chapters"></div>
-    <div class="rail-foot">1037 鈥?1101</div>
+    <div class="rail-foot">1037 — 1101</div>
   </div>
 
   <div id="plate">
@@ -434,9 +435,9 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
     <div class="pl-divider"></div>
     <div class="pl-narrative" id="pl-narrative"></div>
     <div class="pl-thought">
-      <span class="tri"><span class="lbl">鍎?/span><span class="tri-bar"><span class="tri-fill" id="tri-ru" style="background: var(--ru); transform: scaleX(0);"></span></span></span>
-      <span class="tri"><span class="lbl">閬?/span><span class="tri-bar"><span class="tri-fill" id="tri-dao" style="background: var(--dao); transform: scaleX(0);"></span></span></span>
-      <span class="tri"><span class="lbl">浣?/span><span class="tri-bar"><span class="tri-fill" id="tri-fo" style="background: var(--fo); transform: scaleX(0);"></span></span></span>
+      <span class="tri"><span class="lbl">儒</span><span class="tri-bar"><span class="tri-fill" id="tri-ru" style="background: var(--ru); transform: scaleX(0);"></span></span></span>
+      <span class="tri"><span class="lbl">道</span><span class="tri-bar"><span class="tri-fill" id="tri-dao" style="background: var(--dao); transform: scaleX(0);"></span></span></span>
+      <span class="tri"><span class="lbl">佛</span><span class="tri-bar"><span class="tri-fill" id="tri-fo" style="background: var(--fo); transform: scaleX(0);"></span></span></span>
     </div>
   </div>
 
@@ -444,19 +445,19 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
   <div class="stage-seal" id="stage-seal"><div class="stage-seal-box" id="stage-seal-box"></div></div>
 
   <div id="nav-btns">
-    <button class="nav-btn" id="btn-prev" onclick="goto(currentChapter-1)"><span class="arr">鈬?/span> 婧?琛?/button>
-    <button class="nav-btn" id="btn-next" onclick="goto(currentChapter+1)">缁?寰€ <span class="arr">鈬?/span></button>
+    <button class="nav-btn" id="btn-prev" onclick="goto(currentChapter-1)"><span class="arr">⇠</span> 溯 行</button>
+    <button class="nav-btn" id="btn-next" onclick="goto(currentChapter+1)">继 往 <span class="arr">⇢</span></button>
   </div>
 
-  <button id="goto-ending" onclick="showEnding()">鍏?鐢?鍛?鏄?鍥?路 瑙?鍏?涓€ 鐢?/button>
+  <button id="goto-ending" onclick="showEnding()">入 生 命 星 图 · 观 其 一 生</button>
 
   <div id="ribbon">
     <div class="rb-inner">
       <div class="rb-header">
-        <div class="rb-title">韬?路 鍗椾笅銆€锛忋€€蹇?路 涓婂崌</div>
+        <div class="rb-title">身 · 南下　／　心 · 上升</div>
         <div class="rb-legend">
-          <span><span class="sw lat"></span>鍦扮悊绾害 鈫?/span>
-          <span><span class="sw spirit"></span>绮剧杞ㄨ抗 鈫戯紙鍎掆啋閬撯啋浣涳級</span>
+          <span><span class="sw lat"></span>地理纬度 ↓</span>
+          <span><span class="sw spirit"></span>精神轨迹 ↑（儒→道→佛）</span>
         </div>
       </div>
       <canvas id="rb-canvas" width="1348" height="105"></canvas>
@@ -470,192 +471,192 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 <div id="utai">
   <div class="utai-grid"></div>
   <div class="utai-content">
-    <div class="utai-year">鍏?涓?浜?骞?路 1 0 7 9</div>
-    <div class="utai-title tremor">涔?鍙?璇?妗?<span class="em">锛?/span> 鏂?瑁?/div>
-    <div class="utai-sub">涓冩湀浜屽崄鍏棩锛屽尽鍙插彴宸畼鑷贝浜嚦婀栧窞銆備簩鍗佷綑鏃ュ洑浜庡尽鍙插彴鐙憋紝鏄煎鍙楄锛屼互璇楁枃鎽樺彞涓虹姜璇併€備竴鐧句笁鍗佹棩鍚庡嚭鐙憋紝璐粍宸炲洟缁冨壇浣裤€傝嚜姝わ紝閭ｄ釜鎰忔皵灏戝勾娑堝け浜嗭紱涓滃潯灞呭＋灏嗚鍦ㄩ暱姹熻竟鐨勮崚鍧′笂锛岄噸鏂扮敓鍑轰竴涓汉銆?/div>
-    <div class="utai-charge">璁?璁?鏈?鏀?路 鎰?寮?鏈?寤?路 璋?璁?鍏?甯?路 缃?褰?姝?/div>
+    <div class="utai-year">元 丰 二 年 · 1 0 7 9</div>
+    <div class="utai-title tremor">乌 台 诗 案 <span class="em">／</span> 断 裂</div>
+    <div class="utai-sub">七月二十八日，御史台差官自汴京至湖州。二十余日囚于御史台狱，昼夜受讯，以诗文摘句为罪证。一百三十日后出狱，贬黄州团练副使。自此，那个意气少年消失了；东坡居士将要在长江边的荒坡上，重新生出一个人。</div>
+    <div class="utai-charge">讽 讪 朝 政 · 愚 弄 朝 廷 · 谤 讪 先 帝 · 罪 当 死</div>
   </div>
 </div>
 
 <div id="ending">
   <canvas id="ending-canvas"></canvas>
-  <div class="end-title">涓€ 鐢?鏄?鍥?span class="sub">THE CONSTELLATION OF A LIFE</span></div>
+  <div class="end-title">一 生 星 图<span class="sub">THE CONSTELLATION OF A LIFE</span></div>
   <div class="end-epitaph" id="end-epitaph">
-    蹇冧技宸茬伆涔嬫湪<br>韬涓嶇郴涔嬭垷<br>闂睗骞崇敓鍔熶笟<br>榛勫窞 路 鎯犲窞 路 鍎嬪窞
-    <div class="sig">鈥?鑷閲戝北鐢诲儚 路 1101</div>
+    心似已灰之木<br>身如不系之舟<br>问汝平生功业<br>黄州 · 惠州 · 儋州
+    <div class="sig">— 自题金山画像 · 1101</div>
   </div>
   <div class="end-thesis" id="end-thesis">
     <div class="lab">THESIS</div>
-    <div class="body">韬綋鑷湁灞辫€岃嚦鍎嬪窞锛岀含搴︾敱 <em>30掳N</em> 鍧犺嚦 <em>19掳N</em>锛涚瑪澧ㄨ嚜绀剧ǚ娌诲浗鑰岃嚦绌鸿櫄瀵傜伃锛屽鐣岀敱 <em>鍎?/em> 娑屽悜 <em>浣?/em>銆?br><br>杩欎袱鏉¤建杩瑰湪鍖楀畫鐨勫北娌充笂浜ょ粐鈥斺€?em>瓒婅蛋瓒婂崡锛岃秺鍐欒秺楂?/em>銆傚湴鍥撅紝鏄嫃杞煎啓缁欎粬鑷繁鐨勪竴棣栭暱璇椼€?/div>
+    <div class="body">身体自眉山而至儋州，纬度由 <em>30°N</em> 坠至 <em>19°N</em>；笔墨自社稷治国而至空虚寂灭，境界由 <em>儒</em> 涌向 <em>佛</em>。<br><br>这两条轨迹在北宋的山河上交织——<em>越走越南，越写越高</em>。地图，是苏轼写给他自己的一首长诗。</div>
   </div>
-  <button class="end-restart" id="end-restart" onclick="restart()">浠?澶?鍐?娓?/button>
+  <button class="end-restart" id="end-restart" onclick="restart()">从 头 再 游</button>
 </div>
 
 <div id="title-stage">
-  <div class="t-bg-char a">涓?/div>
-  <div class="t-bg-char b">鍧?/div>
-  <div class="t-seal">鍖?瀹?路 鏂?瀛?鍦?鐞?/div>
-  <div class="t-seal right">鑻?杞?路 涓€ 銆?涓?涓?鈥?涓€ 涓€ 銆?涓€</div>
+  <div class="t-bg-char a">东</div>
+  <div class="t-bg-char b">坡</div>
+  <div class="t-seal">北 宋 · 文 学 地 理</div>
+  <div class="t-seal right">苏 轼 · 一 〇 三 七 — 一 一 〇 一</div>
   <div class="title-inner">
-    <div class="t-pretitle">涓€ 骞?鍙?浠?璧?鍔?鐨?鐢?鍛?/div>
-    <div class="t-main">涓€ 钃?鐑?闆?span class="mini">路</span>浠?骞?鐢?/div>
-    <div class="t-sub">鑻?杞?婕?娓?杞?杩?涓?绮?绁?娴?杞?/div>
-    <div class="t-byline">SU SHI 路 A GEOGRAPHY OF THE SOUL</div>
-    <div class="t-thesis">鏈綔浠?58 棣栬瘲璇嶃€?5 涓湴鐞嗚妭鐐逛负鍩烘潗锛岃璇佷竴涓弽鍚戣繍鍔細韬綋鑷湁灞辫€屼笅鍎嬪窞锛岀含搴︾敱鍖楀悜鍗楄繛缁潬钀斤紱蹇冪瑪鑷ぞ绋峰姛涓氳€岃嚦绌哄够瀵傜伃锛屽鐣岀敱鍎掑叆閬撱€佺敱閬撳叆浣涜妭鑺備笂鍗囥€傚湴鍥句笉鏄垶鍙帮紝鍦板浘鏄鎹€?/div>
-    <button class="enter" onclick="start()">鍏?鐢?鈫?/button>
+    <div class="t-pretitle">一 幅 可 以 走 动 的 生 命</div>
+    <div class="t-main">一 蓑 烟 雨<span class="mini">·</span>任 平 生</div>
+    <div class="t-sub">苏 轼 漫 游 轨 迹 与 精 神 流 转</div>
+    <div class="t-byline">SU SHI · A GEOGRAPHY OF THE SOUL</div>
+    <div class="t-thesis">本作以 58 首诗词、25 个地理节点为基材，论证一个反向运动：身体自眉山而下儋州，纬度由北向南连续坠落；心笔自社稷功业而至空幻寂灭，境界由儒入道、由道入佛节节上升。地图不是舞台，地图是论据。</div>
+    <button class="enter" onclick="start()">入 画 →</button>
   </div>
 </div>
 
 <div id="tweaks">
-  <div class="tw-title">璋?鍙?/div>
-  <div class="tw-row"><label>鍦板舰璧蜂紡</label><input type="range" id="tw-terrain" min="0" max="3" step="0.1" value="1.8"></div>
-  <div class="tw-row"><label>澶╂皵鍥惧眰</label><input type="checkbox" id="tw-weather" checked=""></div>
-  <div class="tw-row"><label>澧ㄨ抗鏂囧瓧</label><input type="checkbox" id="tw-ink" checked=""></div>
-  <div class="tw-row"><label>鍗版湵鑹?/label><input type="color" id="tw-seal" value="#A83A38"></div>
-  <button class="tw-btn" onclick="overview()">绾?瑙?鍏?绋?/button>
+  <div class="tw-title">调 参</div>
+  <div class="tw-row"><label>地形起伏</label><input type="range" id="tw-terrain" min="0" max="3" step="0.1" value="1.8"></div>
+  <div class="tw-row"><label>天气图层</label><input type="checkbox" id="tw-weather" checked=""></div>
+  <div class="tw-row"><label>墨迹文字</label><input type="checkbox" id="tw-ink" checked=""></div>
+  <div class="tw-row"><label>印朱色</label><input type="color" id="tw-seal" value="#A83A38"></div>
+  <button class="tw-btn" onclick="overview()">纵 览 全 程</button>
 </div>
 
 <script id="data-json" type="application/json">
 {
   "chapters": [
     {
-      "id":1,"numeral":"鈪?,"title":"鍑哄窛","period":"1056 鈥?1059","en":"LEAVING SICHUAN",
+      "id":1,"numeral":"Ⅰ","title":"出川","period":"1056 — 1059","en":"LEAVING SICHUAN",
       "center":[108.5,31.8],"zoom":5.0,"pitch":40,"bearing":18,
       "bounds":[[99,26],[120,39]],
       "weather":["dawn","mist"],
-      "ink":[{"c":"涓夊场","x":"22%","y":"42%","size":"11rem","rot":-6,"o":0.18,"v":false},
-             {"c":"铚€","x":"5%","y":"68%","size":"9rem","rot":-8,"o":0.14,"v":false}],
+      "ink":[{"c":"三峡","x":"22%","y":"42%","size":"11rem","rot":-6,"o":0.18,"v":false},
+             {"c":"蜀","x":"5%","y":"68%","size":"9rem","rot":-8,"o":0.14,"v":false}],
       "ru":0.68,"dao":0.26,"fo":0.06,
-      "narrative":"鍢夌鍏冨勾锛屼簩鍗佸瞾鐨勮嫃杞间笌鐖惰嫃娲点€佸紵鑻忚緳鍑哄窛搴旇瘯銆傜埗瀛愪笁浜虹敱鐪夊北娌垮卜姹熷叆闀挎睙锛岀┛涓夊场涓滀笅姹翠含銆備笁宄℃儕娑涘垵瑙侊紝灏戝勾澹織鍜岀涔℃儐鎬呬竴鍚岀炕娑?鈥斺€?閭ｆ椂浠栬繕涓嶇煡閬擄紝杩欐槸涓€鐢熶腑鍞竴涓€娆＄湡姝ｅ洖鍒板洓宸濈殑璺€?,
-      "seal":"涓夎嫃鍑哄场",
+      "narrative":"嘉祐元年，二十岁的苏轼与父苏洵、弟苏辙出川应试。父子三人由眉山沿岷江入长江，穿三峡东下汴京。三峡惊涛初见，少年壮志和离乡惆怅一同翻涌 —— 那时他还不知道，这是一生中唯一一次真正回到四川的路。",
+      "seal":"三苏出峡",
       "events":[
-        {"name":"鐪夊北","year":"1056","lng":103.85,"lat":30.08,"desc":"鏁呭洯 路 鐖跺瓙涓変汉鑷鍑哄窛"},
-        {"name":"鍢夊窞","year":"1059","lng":103.77,"lat":29.55,"desc":"鑸熷彂鍢夊窞 鈥?浠庢绂昏渶"},
-        {"name":"涓夊场","year":"1059","lng":110.00,"lat":30.80,"desc":"鍒濊澶ф睙澶ф渤"},
-        {"name":"姹熼櫟","year":"1059","lng":112.24,"lat":30.33,"desc":"涓夎嫃鐖跺瓙璇楁枃缁撻泦"},
-        {"name":"瑗勯槼","year":"1059","lng":112.14,"lat":32.04,"desc":"淇话鍙や粖浜虹墿"},
-        {"name":"娓戞睜","year":"1061","lng":111.76,"lat":34.77,"desc":"鍐欎笅椋為缚韪忛洩"},
-        {"name":"姹翠含","year":"1057","lng":114.35,"lat":34.80,"desc":"娆ч槼淇儕涓哄鎵?}
+        {"name":"眉山","year":"1056","lng":103.85,"lat":30.08,"desc":"故园 · 父子三人自此出川"},
+        {"name":"嘉州","year":"1059","lng":103.77,"lat":29.55,"desc":"舟发嘉州 — 从此离蜀"},
+        {"name":"三峡","year":"1059","lng":110.00,"lat":30.80,"desc":"初见大江大河"},
+        {"name":"江陵","year":"1059","lng":112.24,"lat":30.33,"desc":"三苏父子诗文结集"},
+        {"name":"襄阳","year":"1059","lng":112.14,"lat":32.04,"desc":"俯仰古今人物"},
+        {"name":"渑池","year":"1061","lng":111.76,"lat":34.77,"desc":"写下飞鸿踏雪"},
+        {"name":"汴京","year":"1057","lng":114.35,"lat":34.80,"desc":"欧阳修惊为奇才"}
       ],
       "poems":[
-        {"t":"鍜屽瓙鐢辨笐姹犳€€鏃?,"b":"浜虹敓鍒板鐭ヤ綍浼糪n搴斾技椋為缚韪忛洩娉n娉ヤ笂鍋剁劧鐣欐寚鐖猏n楦块閭ｅ璁′笢瑗?,"r":"primary","x":"8%","y":"3%"},
-        {"t":"鍏ュ场","b":"鑷様鎬€娓呰祻\n绁炴父鏉宠敿闂?,"r":"secondary","x":"52%","y":"6%"},
-        {"t":"杩囪闃?,"b":"姹夋按杩炲ぉ鐧絓n妤氬北褰撴棩鏄?,"r":"tertiary","x":"76%","y":"8%"}
+        {"t":"和子由渑池怀旧","b":"人生到处知何似\n应似飞鸿踏雪泥\n泥上偶然留指爪\n鸿飞那复计东西","r":"primary","x":"8%","y":"3%"},
+        {"t":"入峡","b":"自昔怀清赏\n神游杳蔼间","r":"secondary","x":"52%","y":"6%"},
+        {"t":"过襄阳","b":"汉水连天白\n楚山当日明","r":"tertiary","x":"76%","y":"8%"}
       ]
     },
     {
-      "id":2,"numeral":"鈪?,"title":"浜煄涓庡垵浠?,"period":"1060 鈥?1071","en":"THE COURT",
+      "id":2,"numeral":"Ⅱ","title":"京城与初仕","period":"1060 — 1071","en":"THE COURT",
       "center":[113.5,33.5],"zoom":4.8,"pitch":36,"bearing":-6,
       "bounds":[[101,26],[124,40]],
       "weather":["dawn"],
-      "ink":[{"c":"浜?,"x":"55%","y":"55%","size":"13rem","rot":0,"o":0.17,"v":false},
-             {"c":"婀?,"x":"78%","y":"22%","size":"8rem","rot":-4,"o":0.14,"v":false}],
+      "ink":[{"c":"京","x":"55%","y":"55%","size":"13rem","rot":0,"o":0.17,"v":false},
+             {"c":"湖","x":"78%","y":"22%","size":"8rem","rot":-4,"o":0.14,"v":false}],
       "ru":0.56,"dao":0.34,"fo":0.10,
-      "narrative":"鍑ょ繑绛惧垽鏄粬鐨勭涓€涓寮忓畼鑱屻€傚崄骞撮棿缁忎抚鐖躲€佽繕鏈濄€佷笌鐜嬪畨鐭虫斂瑙佷笉鍚堬紝鑷澶栦换銆備粠鍑ょ繑鐨勫枩闆ㄤ涵鍒版澀宸炵殑瑗挎箹锛屼粬鐨勭瑪鐢辨湞鍫傛皯鐢燂紝鎮勬倓鍚戞睙鍗楀北姘村亸绉汇€傛斂娌讳笂鐨勭涓€娆″彈鎸紝涔熻閬撲經涔嬫€濆垵娆℃诞鐜般€?,
-      "seal":"鍠滈洦浜?,
+      "narrative":"凤翔签判是他的第一个正式官职。十年间经丧父、还朝、与王安石政见不合，自请外任。从凤翔的喜雨亭到杭州的西湖，他的笔由朝堂民生，悄悄向江南山水偏移。政治上的第一次受挫，也让道佛之思初次浮现。",
+      "seal":"喜雨亭",
       "events":[
-        {"name":"姹翠含","year":"1060","lng":114.35,"lat":34.80,"desc":"鍥炰含鍊欎换"},
-        {"name":"鍑ょ繑","year":"1062","lng":107.39,"lat":34.52,"desc":"鍒濅粫 鈥?鍠滈洦浜?/ 鍑岃櫄鍙?},
-        {"name":"姹翠含","year":"1065","lng":114.35,"lat":34.80,"desc":"鐖朵抚 路 鏀胯鍐茬獊"},
-        {"name":"鏉窞","year":"1071","lng":120.15,"lat":30.25,"desc":"閫氬垽 鈥?鍒濋亣瑗挎箹"}
+        {"name":"汴京","year":"1060","lng":114.35,"lat":34.80,"desc":"回京候任"},
+        {"name":"凤翔","year":"1062","lng":107.39,"lat":34.52,"desc":"初仕 — 喜雨亭 / 凌虚台"},
+        {"name":"汴京","year":"1065","lng":114.35,"lat":34.80,"desc":"父丧 · 政见冲突"},
+        {"name":"杭州","year":"1071","lng":120.15,"lat":30.25,"desc":"通判 — 初遇西湖"}
       ],
       "poems":[
-        {"t":"楗箹涓婂垵鏅村悗闆?,"b":"姘村厜娼嬫粺鏅存柟濂絓n灞辫壊绌鸿挋闆ㄤ害濂嘰n娆叉妸瑗挎箹姣旇タ瀛怽n娣″娴撴姽鎬荤浉瀹?,"r":"primary","x":"8%","y":"3%"},
-        {"t":"鏈涙箹妤奸唹涔?,"b":"榛戜簯缈诲ⅷ鏈伄灞盶n鐧介洦璺崇彔涔卞叆鑸?,"r":"secondary","x":"30%","y":"3%"},
-        {"t":"鍏拰濉?,"b":"绌哄北鏂伴洦鍚嶾n閽熷０婢规棤鐥?,"r":"tertiary","x":"50%","y":"6%"}
+        {"t":"饮湖上初晴后雨","b":"水光潋滟晴方好\n山色空蒙雨亦奇\n欲把西湖比西子\n淡妆浓抹总相宜","r":"primary","x":"8%","y":"3%"},
+        {"t":"望湖楼醉书","b":"黑云翻墨未遮山\n白雨跳珠乱入船","r":"secondary","x":"30%","y":"3%"},
+        {"t":"六和塔","b":"空山新雨后\n钟声澹无痕","r":"tertiary","x":"50%","y":"6%"}
       ]
     },
     {
-      "id":3,"numeral":"鈪?,"title":"杈楄浆澶栦换","period":"1071 鈥?1079","en":"FOUR PREFECTURES",
+      "id":3,"numeral":"Ⅲ","title":"辗转外任","period":"1071 — 1079","en":"FOUR PREFECTURES",
       "center":[118.2,34.0],"zoom":5.0,"pitch":34,"bearing":4,
       "bounds":[[108,25],[126,40]],
       "weather":["moon"],
-      "ink":[{"c":"鏈?,"x":"12%","y":"40%","size":"13rem","rot":0,"o":0.2,"v":false},
-             {"c":"鐚?,"x":"34%","y":"68%","size":"9rem","rot":-8,"o":0.15,"v":false}],
+      "ink":[{"c":"月","x":"12%","y":"40%","size":"13rem","rot":0,"o":0.2,"v":false},
+             {"c":"猎","x":"34%","y":"68%","size":"9rem","rot":-8,"o":0.15,"v":false}],
       "ru":0.54,"dao":0.42,"fo":0.04,
-      "narrative":"鏉窞鈥斿瘑宸炩€斿緪宸炩€旀箹宸炪€傚瘑宸炲嚭鐚庣殑璞斁銆佷腑绉嬫湜鏈堢殑濠靛銆佸緪宸炴姉娲殑琛€鎬э紝鏄粬鍎掑鑳介噺鏈€鍚庝竴娆″叏闈㈢垎鍙戙€傝€屽湪绗旈攱涔嬮棿锛屻€婅秴鐒跺彴璁般€嬪凡鎮勭劧鍑虹幇銆傚叓骞村娉箣鏈紝涔屽彴璇楁鐨勯槾褰辨浠庡尽鍙插彴閫艰繎婀栧窞銆?,
-      "seal":"瓒呯劧鍙?,
+      "narrative":"杭州—密州—徐州—湖州。密州出猎的豪放、中秋望月的婵娟、徐州抗洪的血性，是他儒家能量最后一次全面爆发。而在笔锋之间，《超然台记》已悄然出现。八年奔波之末，乌台诗案的阴影正从御史台逼近湖州。",
+      "seal":"超然台",
       "events":[
-        {"name":"鏉窞","year":"1072","lng":120.15,"lat":30.25,"desc":"鏈涙箹妤奸唹涔?路 瑗挎箹"},
-        {"name":"瀵嗗窞","year":"1075","lng":119.40,"lat":35.99,"desc":"鍑虹寧 路 璁版ⅵ 路 姘磋皟姝屽ご"},
-        {"name":"寰愬窞","year":"1077","lng":117.28,"lat":34.26,"desc":"鎶楁椽涓冨崄浣欐棩"},
-        {"name":"婀栧彛","year":"1079","lng":116.22,"lat":29.74,"desc":"鐭抽挓灞辫"},
-        {"name":"婀栧窞","year":"1079","lng":120.09,"lat":30.87,"desc":"涓冩湀浜屽崄鍏棩 鈥?琚€?}
+        {"name":"杭州","year":"1072","lng":120.15,"lat":30.25,"desc":"望湖楼醉书 · 西湖"},
+        {"name":"密州","year":"1075","lng":119.40,"lat":35.99,"desc":"出猎 · 记梦 · 水调歌头"},
+        {"name":"徐州","year":"1077","lng":117.28,"lat":34.26,"desc":"抗洪七十余日"},
+        {"name":"湖口","year":"1079","lng":116.22,"lat":29.74,"desc":"石钟山记"},
+        {"name":"湖州","year":"1079","lng":120.09,"lat":30.87,"desc":"七月二十八日 — 被逮"}
       ],
       "poems":[
-        {"t":"姘磋皟姝屽ご路涓欒景涓","b":"鏄庢湀鍑犳椂鏈塡n鎶婇厭闂潚澶‐n涓嶇煡澶╀笂瀹槞\n浠婂鏄綍骞碶n浣嗘効浜洪暱涔匼n鍗冮噷鍏卞┑濞?,"r":"primary","x":"8%","y":"1%"},
-        {"t":"姹熷煄瀛惵峰瘑宸炲嚭鐚?,"b":"鑰佸か鑱婂彂灏戝勾鐙俓n宸︾壍榛刓n鍙虫搸鑻?,"r":"secondary","x":"32%","y":"3%"},
-        {"t":"姹熷煄瀛惵疯姊?,"b":"鍗佸勾鐢熸涓よ尗鑼玕n涓嶆€濋噺\n鑷毦蹇?,"r":"tertiary","x":"52%","y":"6%"}
+        {"t":"水调歌头·丙辰中秋","b":"明月几时有\n把酒问青天\n不知天上宫阙\n今夕是何年\n但愿人长久\n千里共婵娟","r":"primary","x":"8%","y":"1%"},
+        {"t":"江城子·密州出猎","b":"老夫聊发少年狂\n左牵黄\n右擎苍","r":"secondary","x":"32%","y":"3%"},
+        {"t":"江城子·记梦","b":"十年生死两茫茫\n不思量\n自难忘","r":"tertiary","x":"52%","y":"6%"}
       ]
     },
     {
-      "id":4,"numeral":"鈪?,"title":"榛勫窞绐佸洿","period":"1080 鈥?1084","en":"THE HUANGZHOU TURN",
+      "id":4,"numeral":"Ⅳ","title":"黄州突围","period":"1080 — 1084","en":"THE HUANGZHOU TURN",
       "center":[114.87,30.45],"zoom":8.5,"pitch":55,"bearing":-16,
       "bounds":[[113,28.5],[117,32.2]],
       "weather":["rain","mist"],
-      "ink":[{"c":"涓€钃戠儫闆?,"x":"6%","y":"70%","size":"6rem","rot":0,"o":0.18,"v":true},
-             {"c":"璧ゅ","x":"56%","y":"55%","size":"12rem","rot":-6,"o":0.2,"v":false},
-             {"c":"涓滃潯","x":"68%","y":"8%","size":"10rem","rot":-4,"o":0.16,"v":false}],
+      "ink":[{"c":"一蓑烟雨","x":"6%","y":"70%","size":"6rem","rot":0,"o":0.18,"v":true},
+             {"c":"赤壁","x":"56%","y":"55%","size":"12rem","rot":-6,"o":0.2,"v":false},
+             {"c":"东坡","x":"68%","y":"8%","size":"10rem","rot":-4,"o":0.16,"v":false}],
       "ru":0.18,"dao":0.53,"fo":0.29,
-      "narrative":"鍑虹嫳璐粍宸炲洟缁冨壇浣?鈥斺€?鏈夊畼琛旓紝鏃犺柂淇革紝鏃犲疄鏉冦€備粬鍦ㄥ煄澶栦笢鍧″紑鍨﹁崚鍦帮紝鑷彿涓滃潯灞呭＋銆傚湴鐞嗙殑绌洪棿楠ょ劧鍘嬬缉涓轰竴姹熴€佷竴鍧°€佷竴鏈堬紱绮剧鐨勭┖闂村嵈鏃犻檺灞曞紑銆傘€婅丹澹佹€€鍙ゃ€嬨€佸墠鍚庤丹澹佽祴銆併€婂畾椋庢尝銆嬧€斺€?涓浗鏂囧鐨勫嚑澶勯珮宄帮紝閮藉湪杩欏洓骞撮噷杩稿彂銆?,
-      "seal":"涓滃潯灞呭＋",
+      "narrative":"出狱贬黄州团练副使 —— 有官衔，无薪俸，无实权。他在城外东坡开垦荒地，自号东坡居士。地理的空间骤然压缩为一江、一坡、一月；精神的空间却无限展开。《赤壁怀古》、前后赤壁赋、《定风波》—— 中国文学的几处高峰，都在这四年里迸发。",
+      "seal":"东坡居士",
       "events":[
-        {"name":"榛勫窞","year":"1080","lng":114.87,"lat":30.45,"desc":"鍒濆埌榛勫窞 路 鍗滅畻瀛?},
-        {"name":"涓滃潯","year":"1081","lng":114.88,"lat":30.44,"desc":"寮€鍨︿笢鍧?鈥?鍙风敱姝ょ珛"},
-        {"name":"娌欐箹","year":"1082","lng":114.90,"lat":30.43,"desc":"绔规潠鑺掗瀷 路 涓€钃戠儫闆?},
-        {"name":"璧ゅ","year":"1082","lng":114.86,"lat":30.46,"desc":"澶ф睙涓滃幓 路 娓呴鏄庢湀"},
-        {"name":"鎵垮ぉ瀵?,"year":"1083","lng":114.87,"lat":30.46,"desc":"浣嗗皯闂蹭汉濡傚惥涓や汉鑰呰€?}
+        {"name":"黄州","year":"1080","lng":114.87,"lat":30.45,"desc":"初到黄州 · 卜算子"},
+        {"name":"东坡","year":"1081","lng":114.88,"lat":30.44,"desc":"开垦东坡 — 号由此立"},
+        {"name":"沙湖","year":"1082","lng":114.90,"lat":30.43,"desc":"竹杖芒鞋 · 一蓑烟雨"},
+        {"name":"赤壁","year":"1082","lng":114.86,"lat":30.46,"desc":"大江东去 · 清风明月"},
+        {"name":"承天寺","year":"1083","lng":114.87,"lat":30.46,"desc":"但少闲人如吾两人者耳"}
       ],
       "poems":[
-        {"t":"瀹氶娉?,"b":"鑾惉绌挎灄鎵撳彾澹癨n浣曞Θ鍚熷暩涓斿緪琛孿n绔规潠鑺掗瀷杞昏儨椹琝n璋佹€昞n涓€钃戠儫闆ㄤ换骞崇敓","r":"primary","x":"8%","y":"2%"},
-        {"t":"蹇靛ゴ濞嚶疯丹澹佹€€鍙?,"b":"澶ф睙涓滃幓\n娴窐灏絓n鍗冨彜椋庢祦浜虹墿","r":"secondary","x":"30%","y":"3%"},
-        {"t":"鍓嶈丹澹佽祴","b":"鎯熸睙涓婁箣娓呴\n涓庡北闂翠箣鏄庢湀","r":"tertiary","x":"48%","y":"5%"}
+        {"t":"定风波","b":"莫听穿林打叶声\n何妨吟啸且徐行\n竹杖芒鞋轻胜马\n谁怕\n一蓑烟雨任平生","r":"primary","x":"8%","y":"2%"},
+        {"t":"念奴娇·赤壁怀古","b":"大江东去\n浪淘尽\n千古风流人物","r":"secondary","x":"30%","y":"3%"},
+        {"t":"前赤壁赋","b":"惟江上之清风\n与山间之明月","r":"tertiary","x":"48%","y":"5%"}
       ]
     },
     {
-      "id":5,"numeral":"鈪?,"title":"鍗楁浮宀崡","period":"1094 鈥?1100","en":"ACROSS THE SEA",
+      "id":5,"numeral":"Ⅴ","title":"南渡岭南","period":"1094 — 1100","en":"ACROSS THE SEA",
       "center":[112,22.5],"zoom":4.5,"pitch":30,"bearing":0,
       "bounds":[[102,16],[122,30]],
       "weather":["heat","mist"],
-      "ink":[{"c":"鑽?,"x":"62%","y":"50%","size":"11rem","rot":-4,"o":0.19,"v":false},
-             {"c":"娴?,"x":"18%","y":"70%","size":"13rem","rot":0,"o":0.2,"v":false}],
+      "ink":[{"c":"荔","x":"62%","y":"50%","size":"11rem","rot":-4,"o":0.19,"v":false},
+             {"c":"海","x":"18%","y":"70%","size":"13rem","rot":0,"o":0.2,"v":false}],
       "ru":0.08,"dao":0.59,"fo":0.33,
-      "narrative":"鏂板厷鍐嶈捣锛屼竴璐啀璐€備粠瀹氬窞鍒版儬宸烇紝鍐嶅埌娴峰崡鍎嬪窞 鈥斺€?鍖楀畫鍒戝埗锛屾浮娴疯荡鐞间粎娆′簬姝荤姜銆傚勾杩戣姳鐢诧紝浠栧嵈鎶婃祦鏀惧啓鎴愬缁濈殑鏃呮父锛氭棩鍟栬崝鏋濅笁鐧鹃锛涙澗椋庝涵鍓嶅拷鎮熸闂存湁鐢氭瓏涓嶅緱澶勶紱鍎嬭€宠洰鑽掓暀瀛愬紵璇讳功銆備粬鎶婅杩殑娴佹斁锛屾椿鎴愪簡涓诲姩鐨勫綊闅愩€?,
-      "seal":"鏃ュ晼鑽旀灊",
+      "narrative":"新党再起，一贬再贬。从定州到惠州，再到海南儋州 —— 北宋刑制，渡海赴琼仅次于死罪。年近花甲，他却把流放写成奇绝的旅游：日啖荔枝三百颗；松风亭前忽悟此间有甚歇不得处；儋耳蛮荒教子弟读书。他把被迫的流放，活成了主动的归隐。",
+      "seal":"日啖荔枝",
       "events":[
-        {"name":"瀹氬窞","year":"1093","lng":114.99,"lat":38.52,"desc":"鐭殏鍥炴湞鍚庡啀閬船"},
-        {"name":"鎯犲窞","year":"1094","lng":114.42,"lat":23.11,"desc":"鏃ュ晼鑽旀灊 路 鍜岄櫠褰掑洯"},
-        {"name":"闆峰窞","year":"1097","lng":110.08,"lat":20.93,"desc":"涓庡紵鑻忚緳璇€鍒?},
-        {"name":"鐞煎窞娴峰场","year":"1097","lng":110.30,"lat":20.00,"desc":"娓℃捣璧村剫"},
-        {"name":"鍎嬪窞","year":"1097","lng":109.58,"lat":19.52,"desc":"妗勬搴?路 鏁欑惣宸炲瓙寮?}
+        {"name":"定州","year":"1093","lng":114.99,"lat":38.52,"desc":"短暂回朝后再遭贬"},
+        {"name":"惠州","year":"1094","lng":114.42,"lat":23.11,"desc":"日啖荔枝 · 和陶归园"},
+        {"name":"雷州","year":"1097","lng":110.08,"lat":20.93,"desc":"与弟苏辙诀别"},
+        {"name":"琼州海峡","year":"1097","lng":110.30,"lat":20.00,"desc":"渡海赴儋"},
+        {"name":"儋州","year":"1097","lng":109.58,"lat":19.52,"desc":"桄榔庵 · 教琼州子弟"}
       ],
       "poems":[
-        {"t":"椋熻崝鏀?,"b":"缃楁诞灞变笅鍥涙椂鏄n鍗㈡鏉ㄦ娆＄鏂癨n鏃ュ晼鑽旀灊涓夌櫨棰梊n涓嶈緸闀夸綔宀崡浜?,"r":"primary","x":"8%","y":"2%"},
-        {"t":"璁版父鏉鹃浜?,"b":"姝ら棿鏈夌敋涔堟瓏涓嶅緱澶刓n鐢辨槸濡傛寕閽╀箣楸糪n蹇藉緱瑙ｈ劚","r":"secondary","x":"32%","y":"3%"},
-        {"t":"鍜岄櫠褰掑洯鐢板眳","b":"绌风尶鏃㈡姇鏋梊n鐤查┈鍒濊В闉?,"r":"tertiary","x":"52%","y":"6%"}
+        {"t":"食荔支","b":"罗浮山下四时春\n卢橘杨梅次第新\n日啖荔枝三百颗\n不辞长作岭南人","r":"primary","x":"8%","y":"2%"},
+        {"t":"记游松风亭","b":"此间有甚么歇不得处\n由是如挂钩之鱼\n忽得解脱","r":"secondary","x":"32%","y":"3%"},
+        {"t":"和陶归园田居","b":"穷猿既投林\n疲马初解鞍","r":"tertiary","x":"52%","y":"6%"}
       ]
     },
     {
-      "id":6,"numeral":"鈪?,"title":"鍖楀綊 路 缁堢珷","period":"1100 鈥?1101","en":"RETURN",
+      "id":6,"numeral":"Ⅵ","title":"北归 · 终章","period":"1100 — 1101","en":"RETURN",
       "center":[116.5,28.5],"zoom":4.7,"pitch":26,"bearing":6,
       "bounds":[[106,17],[124,36]],
       "weather":["sea","dawn"],
-      "ink":[{"c":"婢?,"x":"58%","y":"52%","size":"13rem","rot":0,"o":0.2,"v":false},
-             {"c":"褰?,"x":"14%","y":"68%","size":"10rem","rot":-5,"o":0.17,"v":false}],
+      "ink":[{"c":"澄","x":"58%","y":"52%","size":"13rem","rot":0,"o":0.2,"v":false},
+             {"c":"归","x":"14%","y":"68%","size":"10rem","rot":-5,"o":0.17,"v":false}],
       "ru":0.14,"dao":0.34,"fo":0.52,
-      "narrative":"寰藉畻缁т綅澶ц郸銆傚叚鍗佸洓宀佺殑浠栦粠娴峰崡鍖楀綊锛屾浮娴锋椂鍐欎笅 \"澶╁娴疯壊鏈緞娓匼"銆傜櫨濮撳す閬撶浉杩庛€傚湪闀囨睙閲戝北瀵鸿鍒拌嚜宸卞勾杞绘椂鐨勭敾鍍忥紝浠栧啓涓嬩竴鐢熺殑鎬荤粨锛氶棶姹濆钩鐢熷姛涓氾紝榛勫窞銆佹儬宸炪€佸剫宸炪€傝蛋鍒板父宸烇紝涓冩湀浜屽崄鍏棩閭ｄ竴澶?鈥斺€?閭ｄ釜浠栦簩鍗佷簩骞村墠鍦ㄦ箹宸炶鎹曠殑鍚屼竴涓棩瀛?鈥斺€?浠栫梾閫濅簡銆傝建杩规病鑳藉洖鍒扮湁灞憋紝涓€鐢熺敾鍑轰竴涓笉闂悎鐨勭幆銆?,
-      "seal":"婢?婢?,
+      "narrative":"徽宗继位大赦。六十四岁的他从海南北归，渡海时写下 \"天容海色本澄清\"。百姓夹道相迎。在镇江金山寺见到自己年轻时的画像，他写下一生的总结：问汝平生功业，黄州、惠州、儋州。走到常州，七月二十八日那一天 —— 那个他二十二年前在湖州被捕的同一个日子 —— 他病逝了。轨迹没能回到眉山，一生画出一个不闭合的环。",
+      "seal":"澄 澈",
       "events":[
-        {"name":"鐞煎窞娴峰场","year":"1100","lng":110.30,"lat":20.00,"desc":"娓℃捣鍖楀綊 路 婢勬竻"},
-        {"name":"骞垮窞","year":"1100","lng":113.26,"lat":23.13,"desc":"鐧惧澶归亾娆㈣繋"},
-        {"name":"璧ｅ窞","year":"1100","lng":114.93,"lat":25.83,"desc":"棰樼敾 路 绉嬫櫙"},
-        {"name":"閲戝北","year":"1101","lng":119.43,"lat":32.22,"desc":"瑙佹棫鏃ョ敾鍍?路 鐏版湪涓嶇郴鑸?},
-        {"name":"甯稿窞","year":"1101","lng":119.97,"lat":31.77,"desc":"涓冩湀浜屽崄鍏棩 路 缁?}
+        {"name":"琼州海峡","year":"1100","lng":110.30,"lat":20.00,"desc":"渡海北归 · 澄清"},
+        {"name":"广州","year":"1100","lng":113.26,"lat":23.13,"desc":"百姓夹道欢迎"},
+        {"name":"赣州","year":"1100","lng":114.93,"lat":25.83,"desc":"题画 · 秋景"},
+        {"name":"金山","year":"1101","lng":119.43,"lat":32.22,"desc":"见旧日画像 · 灰木不系舟"},
+        {"name":"常州","year":"1101","lng":119.97,"lat":31.77,"desc":"七月二十八日 · 终"}
       ],
       "poems":[
-        {"t":"鑷閲戝北鐢诲儚","b":"蹇冧技宸茬伆涔嬫湪\n韬涓嶇郴涔嬭垷\n闂睗骞崇敓鍔熶笟\n榛勫窞路鎯犲窞路鍎嬪窞","r":"primary","x":"8%","y":"2%"},
-        {"t":"鍏湀浜屽崄鏃ュ娓℃捣","b":"涔濇鍗楄崚鍚句笉鎭╘n鍏规父濂囩粷鍐犲钩鐢?,"r":"secondary","x":"30%","y":"3%"},
-        {"t":"绛斿緞灞辩惓闀胯€?,"b":"骞崇敓鏂囧瓧涓哄惥绱痋n姝ゅ幓澹板悕涓嶅帉浣?,"r":"tertiary","x":"50%","y":"5%"}
+        {"t":"自题金山画像","b":"心似已灰之木\n身如不系之舟\n问汝平生功业\n黄州·惠州·儋州","r":"primary","x":"8%","y":"2%"},
+        {"t":"六月二十日夜渡海","b":"九死南荒吾不恨\n兹游奇绝冠平生","r":"secondary","x":"30%","y":"3%"},
+        {"t":"答径山琳长老","b":"平生文字为吾累\n此去声名不厌低","r":"tertiary","x":"50%","y":"5%"}
       ]
     }
   ]
@@ -664,58 +665,58 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 
 <script id="works-json" type="application/json">
 [
-{"y":1057,"ch":1,"loc":"姹翠含","lng":114.35,"lat":34.80,"t":"鍒戣祻蹇犲帤涔嬭嚦璁?,"ru":5,"dao":0,"fo":0},
-{"y":1057,"ch":1,"loc":"姹翠含","lng":114.35,"lat":34.80,"t":"鐣欎警璁?,"ru":5,"dao":0,"fo":0},
-{"y":1059,"ch":1,"loc":"姹熼櫟","lng":112.24,"lat":30.33,"t":"鍗楄鍓嶉泦鍙?,"ru":3,"dao":2,"fo":0},
-{"y":1059,"ch":1,"loc":"涓夊场","lng":110.00,"lat":30.80,"t":"鍏ュ场","ru":4,"dao":1,"fo":0},
-{"y":1059,"ch":1,"loc":"鍢夊窞","lng":103.77,"lat":29.55,"t":"鍒濆彂鍢夊窞","ru":3,"dao":2,"fo":0},
-{"y":1059,"ch":1,"loc":"褰北","lng":103.85,"lat":29.70,"t":"宄ㄧ湁灞辨湀姝?,"ru":1,"dao":4,"fo":0},
-{"y":1059,"ch":1,"loc":"瑗勯槼","lng":112.14,"lat":32.04,"t":"杩囪闃?,"ru":4,"dao":1,"fo":0},
-{"y":1061,"ch":1,"loc":"娓戞睜","lng":111.76,"lat":34.77,"t":"鍜屽瓙鐢辨笐姹犳€€鏃?,"ru":2,"dao":1,"fo":2},
-{"y":1062,"ch":2,"loc":"鍑ょ繑","lng":107.39,"lat":34.52,"t":"鍠滈洦浜","ru":5,"dao":0,"fo":0},
-{"y":1063,"ch":2,"loc":"鍑ょ繑","lng":107.39,"lat":34.52,"t":"鍑岃櫄鍙拌","ru":3,"dao":2,"fo":0},
-{"y":1071,"ch":2,"loc":"鏉窞","lng":120.15,"lat":30.25,"t":"鍏拰濉?,"ru":1,"dao":1,"fo":4},
-{"y":1072,"ch":2,"loc":"鏉窞","lng":120.15,"lat":30.25,"t":"鏈涙箹妤奸唹涔?,"ru":1,"dao":4,"fo":0},
-{"y":1073,"ch":2,"loc":"鏉窞","lng":120.15,"lat":30.25,"t":"楗箹涓婂垵鏅村悗闆?,"ru":1,"dao":4,"fo":0},
-{"y":1075,"ch":3,"loc":"瀵嗗窞","lng":119.40,"lat":35.99,"t":"姹熷煄瀛惵峰瘑宸炲嚭鐚?,"ru":5,"dao":0,"fo":0},
-{"y":1075,"ch":3,"loc":"瀵嗗窞","lng":119.40,"lat":35.99,"t":"姹熷煄瀛惵疯姊?,"ru":2,"dao":0,"fo":3},
-{"y":1076,"ch":3,"loc":"瀵嗗窞","lng":119.40,"lat":35.99,"t":"瓒呯劧鍙拌","ru":2,"dao":4,"fo":0},
-{"y":1076,"ch":3,"loc":"瀵嗗窞","lng":119.40,"lat":35.99,"t":"姘磋皟姝屽ご","ru":3,"dao":3,"fo":0},
-{"y":1077,"ch":3,"loc":"寰愬窞","lng":117.28,"lat":34.26,"t":"娌冲","ru":5,"dao":0,"fo":0},
-{"y":1078,"ch":3,"loc":"寰愬窞","lng":117.28,"lat":34.26,"t":"鏀鹃工浜","ru":1,"dao":4,"fo":0},
-{"y":1079,"ch":3,"loc":"婀栧彛","lng":116.22,"lat":29.74,"t":"鐭抽挓灞辫","ru":3,"dao":2,"fo":0},
-{"y":1079,"ch":3,"loc":"婀栧窞","lng":120.09,"lat":30.87,"t":"婀栧窞璋笂琛?,"ru":5,"dao":0,"fo":0},
-{"y":1080,"ch":4,"loc":"榛勫窞","lng":114.87,"lat":30.45,"t":"鍒濆埌榛勫窞","ru":3,"dao":3,"fo":0},
-{"y":1080,"ch":4,"loc":"榛勫窞","lng":114.87,"lat":30.45,"t":"鍗滅畻瀛惵风己鏈堟寕鐤忔","ru":0,"dao":2,"fo":4},
-{"y":1081,"ch":4,"loc":"榛勫窞","lng":114.87,"lat":30.45,"t":"瀹氭儬闄㈠瘬灞呮湀澶滃伓鍑?,"ru":1,"dao":2,"fo":3},
-{"y":1081,"ch":4,"loc":"涓滃潯","lng":114.88,"lat":30.44,"t":"涓滃潯鍏","ru":3,"dao":3,"fo":0},
-{"y":1082,"ch":4,"loc":"榛勫窞","lng":114.87,"lat":30.45,"t":"瀵掗闆ㄤ簩棣?,"ru":2,"dao":1,"fo":3},
-{"y":1082,"ch":4,"loc":"娌欐箹","lng":114.90,"lat":30.43,"t":"瀹氶娉?,"ru":0,"dao":4,"fo":2},
-{"y":1082,"ch":4,"loc":"璧ゅ","lng":114.86,"lat":30.46,"t":"蹇靛ゴ濞嚶疯丹澹佹€€鍙?,"ru":2,"dao":2,"fo":2},
-{"y":1082,"ch":4,"loc":"璧ゅ","lng":114.86,"lat":30.46,"t":"鍓嶈丹澹佽祴","ru":0,"dao":5,"fo":1},
-{"y":1082,"ch":4,"loc":"璧ゅ","lng":114.86,"lat":30.46,"t":"鍚庤丹澹佽祴","ru":0,"dao":3,"fo":3},
-{"y":1083,"ch":4,"loc":"鎵垮ぉ瀵?,"lng":114.87,"lat":30.46,"t":"璁版壙澶╁澶滄父","ru":1,"dao":4,"fo":1},
-{"y":1082,"ch":4,"loc":"涓寸殝","lng":114.87,"lat":30.45,"t":"涓存睙浠櫬峰褰掍复鐨?,"ru":1,"dao":4,"fo":1},
-{"y":1094,"ch":5,"loc":"鎯犲窞","lng":114.42,"lat":23.11,"t":"鍒濆埌鎯犲窞","ru":1,"dao":4,"fo":0},
-{"y":1094,"ch":5,"loc":"鎯犲窞","lng":114.42,"lat":23.11,"t":"璁版父鏉鹃浜?,"ru":0,"dao":3,"fo":3},
-{"y":1094,"ch":5,"loc":"鎯犲窞","lng":114.42,"lat":23.11,"t":"鍜岄櫠褰掑洯鐢板眳","ru":0,"dao":5,"fo":0},
-{"y":1094,"ch":5,"loc":"鎯犲窞","lng":114.42,"lat":23.11,"t":"鏈濅簯璇?,"ru":1,"dao":1,"fo":4},
-{"y":1095,"ch":5,"loc":"鎯犲窞","lng":114.42,"lat":23.11,"t":"椋熻崝鏀?,"ru":0,"dao":5,"fo":0},
-{"y":1097,"ch":5,"loc":"鍎嬪窞","lng":109.58,"lat":19.52,"t":"璇曠瑪鑷功","ru":0,"dao":2,"fo":4},
-{"y":1097,"ch":5,"loc":"鍎嬪窞","lng":109.58,"lat":19.52,"t":"鍎嬭€冲北","ru":0,"dao":4,"fo":1},
-{"y":1098,"ch":5,"loc":"鍎嬪窞","lng":109.58,"lat":19.52,"t":"琚厭鐙","ru":2,"dao":3,"fo":0},
-{"y":1099,"ch":5,"loc":"鍎嬪窞","lng":109.58,"lat":19.52,"t":"澶滅儳鏉炬槑鐏?,"ru":0,"dao":4,"fo":1},
-{"y":1100,"ch":5,"loc":"鍎嬪窞","lng":109.58,"lat":19.52,"t":"鍑忓瓧鏈ㄥ叞鑺甭风珛鏄?,"ru":1,"dao":4,"fo":0},
-{"y":1100,"ch":6,"loc":"鐞煎窞娴峰场","lng":110.30,"lat":20.00,"t":"鍏湀浜屽崄鏃ュ娓℃捣","ru":2,"dao":3,"fo":1},
-{"y":1101,"ch":6,"loc":"閲戝北","lng":119.43,"lat":32.22,"t":"鑷閲戝北鐢诲儚","ru":1,"dao":2,"fo":3},
-{"y":1101,"ch":6,"loc":"鍗椾含","lng":118.80,"lat":32.06,"t":"鐥呬腑娓哥鍫傚北","ru":0,"dao":1,"fo":4},
-{"y":1101,"ch":6,"loc":"甯稿窞","lng":119.97,"lat":31.77,"t":"绛斿緞灞辩惓闀胯€?,"ru":0,"dao":0,"fo":5},
-{"y":1101,"ch":6,"loc":"甯稿窞","lng":119.97,"lat":31.77,"t":"绛旈挶娴庢槑涔?,"ru":0,"dao":0,"fo":5}
+{"y":1057,"ch":1,"loc":"汴京","lng":114.35,"lat":34.80,"t":"刑赏忠厚之至论","ru":5,"dao":0,"fo":0},
+{"y":1057,"ch":1,"loc":"汴京","lng":114.35,"lat":34.80,"t":"留侯论","ru":5,"dao":0,"fo":0},
+{"y":1059,"ch":1,"loc":"江陵","lng":112.24,"lat":30.33,"t":"南行前集叙","ru":3,"dao":2,"fo":0},
+{"y":1059,"ch":1,"loc":"三峡","lng":110.00,"lat":30.80,"t":"入峡","ru":4,"dao":1,"fo":0},
+{"y":1059,"ch":1,"loc":"嘉州","lng":103.77,"lat":29.55,"t":"初发嘉州","ru":3,"dao":2,"fo":0},
+{"y":1059,"ch":1,"loc":"彭山","lng":103.85,"lat":29.70,"t":"峨眉山月歌","ru":1,"dao":4,"fo":0},
+{"y":1059,"ch":1,"loc":"襄阳","lng":112.14,"lat":32.04,"t":"过襄阳","ru":4,"dao":1,"fo":0},
+{"y":1061,"ch":1,"loc":"渑池","lng":111.76,"lat":34.77,"t":"和子由渑池怀旧","ru":2,"dao":1,"fo":2},
+{"y":1062,"ch":2,"loc":"凤翔","lng":107.39,"lat":34.52,"t":"喜雨亭记","ru":5,"dao":0,"fo":0},
+{"y":1063,"ch":2,"loc":"凤翔","lng":107.39,"lat":34.52,"t":"凌虚台记","ru":3,"dao":2,"fo":0},
+{"y":1071,"ch":2,"loc":"杭州","lng":120.15,"lat":30.25,"t":"六和塔","ru":1,"dao":1,"fo":4},
+{"y":1072,"ch":2,"loc":"杭州","lng":120.15,"lat":30.25,"t":"望湖楼醉书","ru":1,"dao":4,"fo":0},
+{"y":1073,"ch":2,"loc":"杭州","lng":120.15,"lat":30.25,"t":"饮湖上初晴后雨","ru":1,"dao":4,"fo":0},
+{"y":1075,"ch":3,"loc":"密州","lng":119.40,"lat":35.99,"t":"江城子·密州出猎","ru":5,"dao":0,"fo":0},
+{"y":1075,"ch":3,"loc":"密州","lng":119.40,"lat":35.99,"t":"江城子·记梦","ru":2,"dao":0,"fo":3},
+{"y":1076,"ch":3,"loc":"密州","lng":119.40,"lat":35.99,"t":"超然台记","ru":2,"dao":4,"fo":0},
+{"y":1076,"ch":3,"loc":"密州","lng":119.40,"lat":35.99,"t":"水调歌头","ru":3,"dao":3,"fo":0},
+{"y":1077,"ch":3,"loc":"徐州","lng":117.28,"lat":34.26,"t":"河复","ru":5,"dao":0,"fo":0},
+{"y":1078,"ch":3,"loc":"徐州","lng":117.28,"lat":34.26,"t":"放鹤亭记","ru":1,"dao":4,"fo":0},
+{"y":1079,"ch":3,"loc":"湖口","lng":116.22,"lat":29.74,"t":"石钟山记","ru":3,"dao":2,"fo":0},
+{"y":1079,"ch":3,"loc":"湖州","lng":120.09,"lat":30.87,"t":"湖州谢上表","ru":5,"dao":0,"fo":0},
+{"y":1080,"ch":4,"loc":"黄州","lng":114.87,"lat":30.45,"t":"初到黄州","ru":3,"dao":3,"fo":0},
+{"y":1080,"ch":4,"loc":"黄州","lng":114.87,"lat":30.45,"t":"卜算子·缺月挂疏桐","ru":0,"dao":2,"fo":4},
+{"y":1081,"ch":4,"loc":"黄州","lng":114.87,"lat":30.45,"t":"定惠院寓居月夜偶出","ru":1,"dao":2,"fo":3},
+{"y":1081,"ch":4,"loc":"东坡","lng":114.88,"lat":30.44,"t":"东坡八首","ru":3,"dao":3,"fo":0},
+{"y":1082,"ch":4,"loc":"黄州","lng":114.87,"lat":30.45,"t":"寒食雨二首","ru":2,"dao":1,"fo":3},
+{"y":1082,"ch":4,"loc":"沙湖","lng":114.90,"lat":30.43,"t":"定风波","ru":0,"dao":4,"fo":2},
+{"y":1082,"ch":4,"loc":"赤壁","lng":114.86,"lat":30.46,"t":"念奴娇·赤壁怀古","ru":2,"dao":2,"fo":2},
+{"y":1082,"ch":4,"loc":"赤壁","lng":114.86,"lat":30.46,"t":"前赤壁赋","ru":0,"dao":5,"fo":1},
+{"y":1082,"ch":4,"loc":"赤壁","lng":114.86,"lat":30.46,"t":"后赤壁赋","ru":0,"dao":3,"fo":3},
+{"y":1083,"ch":4,"loc":"承天寺","lng":114.87,"lat":30.46,"t":"记承天寺夜游","ru":1,"dao":4,"fo":1},
+{"y":1082,"ch":4,"loc":"临皋","lng":114.87,"lat":30.45,"t":"临江仙·夜归临皋","ru":1,"dao":4,"fo":1},
+{"y":1094,"ch":5,"loc":"惠州","lng":114.42,"lat":23.11,"t":"初到惠州","ru":1,"dao":4,"fo":0},
+{"y":1094,"ch":5,"loc":"惠州","lng":114.42,"lat":23.11,"t":"记游松风亭","ru":0,"dao":3,"fo":3},
+{"y":1094,"ch":5,"loc":"惠州","lng":114.42,"lat":23.11,"t":"和陶归园田居","ru":0,"dao":5,"fo":0},
+{"y":1094,"ch":5,"loc":"惠州","lng":114.42,"lat":23.11,"t":"朝云诗","ru":1,"dao":1,"fo":4},
+{"y":1095,"ch":5,"loc":"惠州","lng":114.42,"lat":23.11,"t":"食荔支","ru":0,"dao":5,"fo":0},
+{"y":1097,"ch":5,"loc":"儋州","lng":109.58,"lat":19.52,"t":"试笔自书","ru":0,"dao":2,"fo":4},
+{"y":1097,"ch":5,"loc":"儋州","lng":109.58,"lat":19.52,"t":"儋耳山","ru":0,"dao":4,"fo":1},
+{"y":1098,"ch":5,"loc":"儋州","lng":109.58,"lat":19.52,"t":"被酒独行","ru":2,"dao":3,"fo":0},
+{"y":1099,"ch":5,"loc":"儋州","lng":109.58,"lat":19.52,"t":"夜烧松明火","ru":0,"dao":4,"fo":1},
+{"y":1100,"ch":5,"loc":"儋州","lng":109.58,"lat":19.52,"t":"减字木兰花·立春","ru":1,"dao":4,"fo":0},
+{"y":1100,"ch":6,"loc":"琼州海峡","lng":110.30,"lat":20.00,"t":"六月二十日夜渡海","ru":2,"dao":3,"fo":1},
+{"y":1101,"ch":6,"loc":"金山","lng":119.43,"lat":32.22,"t":"自题金山画像","ru":1,"dao":2,"fo":3},
+{"y":1101,"ch":6,"loc":"南京","lng":118.80,"lat":32.06,"t":"病中游祖堂山","ru":0,"dao":1,"fo":4},
+{"y":1101,"ch":6,"loc":"常州","lng":119.97,"lat":31.77,"t":"答径山琳长老","ru":0,"dao":0,"fo":5},
+{"y":1101,"ch":6,"loc":"常州","lng":119.97,"lat":31.77,"t":"答钱济明书","ru":0,"dao":0,"fo":5}
 ]
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
-<script src="app_鏀硅繘鐗?js"></script>
+<script src="app_改进版.js"></script>
 
 
 </body></html>

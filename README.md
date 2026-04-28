@@ -1,18 +1,9 @@
-﻿# 一蓑烟雨可视化网页
+# 一蓑烟雨可视化网页
 
-这是“ 一蓑烟雨 ”交互式可视化网页的改进版，已整理为 GitHub Pages 可直接部署的静态站点。
+这是“ 一蓑烟雨 ”交互式可视化网页的线上部署副本。
 
-## 本地预览
+- 本地原始版本保留在 `E:\Visualization`。
+- 线上部署副本位于 `E:\Visualization_pages`。
+- 部署副本使用 MapLibre + OpenFreeMap 免密钥底图，避免公开仓库提交 Mapbox token。
 
-```powershell
-python -m http.server 8000
-```
-
-然后打开 `http://127.0.0.1:8000/`。
-
-## 文件说明
-
-- `index.html`: GitHub Pages 入口，来自 `一蓑烟雨_改进版.html`，并清理了浏览器插件注入节点。
-- `app_改进版.js`: 改进版交互脚本。
-- `data.json`: 原始数据文件。
-- `一蓑烟雨_改进版.html`: 改进版原始页面备份。
+GitHub Pages 地址：<https://zmhwhu.github.io/yisuoyanyu-visualization/>
