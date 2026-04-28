@@ -31,7 +31,30 @@ const ALL_EVENT_COORDS = (function(){
 // green mountains (via hillshade tinted), blue rivers, pale paper land,
 // key toponyms bold, others faded
 function buildAncientStyle(){
-  return 'https://tiles.openfreemap.org/styles/liberty';
+  return {
+    version: 8,
+    name: 'ancient-deploy-osm',
+    sources: {
+      osm: {
+        type: 'raster',
+        tiles: [
+          'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+        ],
+        tileSize: 256,
+        attribution: '&copy; OpenStreetMap contributors'
+      }
+    },
+    layers: [
+      { id: 'paper', type: 'background', paint: { 'background-color': '#E8D9B6' } },
+      { id: 'osm-base', type: 'raster', source: 'osm', paint: {
+        'raster-opacity': 0.78,
+        'raster-saturation': -0.45,
+        'raster-contrast': -0.05,
+        'raster-brightness-min': 0.1,
+        'raster-brightness-max': 0.95
+      } }
+    ]
+  };
 }
 
 let map;
@@ -76,10 +99,20 @@ function initMap(){
 
   map.addControl(new mapboxgl.AttributionControl({compact:true}), 'bottom-right');
 
-  map.on('load', ()=>{
-    addTrailSources();
+  let mapReady = false;
+  const finishMapLoad = ()=>{
+    if(mapReady) return;
+    mapReady = true;
+    try{ addTrailSources(); }catch(e){ console.warn('trail init skipped', e); }
     document.getElementById('loader').classList.add('gone');
+  };
+
+  map.on('load', finishMapLoad);
+  map.on('error', e=>{
+    console.warn('map resource error', e && e.error ? e.error : e);
+    setTimeout(finishMapLoad, 600);
   });
+  setTimeout(finishMapLoad, 4500);
   map.on('style.load', ()=>{
     try{ map.setTerrain({source:'mapbox-dem', exaggeration:TWEAKS.terrainExaggeration}); }catch(e){}
   });
