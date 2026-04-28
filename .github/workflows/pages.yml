@@ -1,4 +1,4 @@
-﻿name: Deploy static site to GitHub Pages
+name: Deploy static site to GitHub Pages
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
       - name: Create Mapbox config
         shell: bash
         run: |
-          printf "window.MAPBOX_TOKEN = %s;\n" "$(jq -Rn --arg token \"$MAPBOX_TOKEN\" '$token')" > config.js
+          node -e "require('fs').writeFileSync('config.js', 'window.MAPBOX_TOKEN = ' + JSON.stringify(process.env.MAPBOX_TOKEN || '') + ';\n')"
         env:
           MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
       - name: Configure Pages
