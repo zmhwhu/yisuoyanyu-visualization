@@ -48,32 +48,6 @@ function buildAncientStyle(){
         type: 'raster-dem',
         url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
         tileSize: 512, maxzoom: 14
-      },
-      'historic-rivers': {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: [
-            {
-              type: 'Feature',
-              properties: { name: 'Yangtze River' },
-              geometry: { type: 'LineString', coordinates: [
-                [91.2,33.5],[95.5,32.4],[99.0,31.3],[101.7,30.9],[104.1,30.7],[105.4,29.3],
-                [106.6,29.6],[108.4,30.8],[111.3,30.7],[114.3,30.6],[116.0,29.7],[117.2,30.5],
-                [118.8,31.6],[120.2,31.7],[121.6,31.3]
-              ] }
-            },
-            {
-              type: 'Feature',
-              properties: { name: 'Yellow River' },
-              geometry: { type: 'LineString', coordinates: [
-                [96.2,35.0],[99.6,34.8],[102.1,35.8],[103.8,36.1],[106.2,37.6],[108.7,40.3],
-                [111.6,40.8],[110.5,37.8],[110.8,35.6],[112.6,34.8],[113.7,34.9],[115.1,35.6],
-                [117.0,36.5],[118.7,37.8],[119.1,38.1]
-              ] }
-            }
-          ]
-        }
       }
     },
     terrain: { source: 'mapbox-dem', exaggeration: TWEAKS.terrainExaggeration },
@@ -124,20 +98,18 @@ function buildAncientStyle(){
         }
       },
 
-      // Yangtze and Yellow River - custom source keeps both rivers visible at every zoom
-      { id: 'historic-rivers-outline', type: 'line', source: 'historic-rivers',
+      // Mapbox natural water bodies and waterways
+      { id: 'water-natural-fill', type: 'fill', source: 'streets', 'source-layer': 'water',
         paint: {
-          'line-color': 'rgba(232,217,182,0.72)',
-          'line-width': ['interpolate',['linear'],['zoom'],3,2.0,6,3.4,9,6.0,12,8.5],
-          'line-opacity': 0.78
-        },
-        layout: { 'line-cap': 'round', 'line-join': 'round' }
+          'fill-color': '#6FA8C8',
+          'fill-opacity': ['interpolate',['linear'],['zoom'],3,0.36,7,0.48,12,0.6]
+        }
       },
-      { id: 'historic-rivers', type: 'line', source: 'historic-rivers',
+      { id: 'water-natural-way', type: 'line', source: 'streets', 'source-layer': 'waterway',
         paint: {
-          'line-color': ['interpolate',['linear'],['zoom'],3,'#6FB4D2',7,'#3F90B8',12,'#26749F'],
-          'line-width': ['interpolate',['linear'],['zoom'],3,1.1,6,2.2,9,4.3,12,6.4],
-          'line-opacity': 0.9
+          'line-color': ['interpolate',['linear'],['zoom'],3,'#7CB9D2',7,'#4F99BA',12,'#327DA2'],
+          'line-width': ['interpolate',['linear'],['zoom'],3,0.6,6,1.2,9,2.6,12,4.4],
+          'line-opacity': ['interpolate',['linear'],['zoom'],3,0.5,7,0.66,12,0.78]
         },
         layout: { 'line-cap': 'round', 'line-join': 'round' }
       },
