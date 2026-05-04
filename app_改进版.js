@@ -98,14 +98,34 @@ function buildAncientStyle(){
         }
       },
 
-      // Mapbox natural water bodies and waterways
+      // Mapbox natural water bodies and waterways - only Yangtze and Yellow River in China
       { id: 'water-natural-fill', type: 'fill', source: 'streets', 'source-layer': 'water',
+        filter: ['any',
+          ['in','长江', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','長江', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','黄河', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','黃河', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','Yangtze', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Chang Jiang', ['coalesce',['get','name'],['get','name_en'],'']],
+          ['in','Yellow River', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Huang He', ['coalesce',['get','name'],['get','name_en'],'']]
+        ],
         paint: {
           'fill-color': '#6FA8C8',
           'fill-opacity': ['interpolate',['linear'],['zoom'],3,0.36,7,0.48,12,0.6]
         }
       },
       { id: 'water-natural-way', type: 'line', source: 'streets', 'source-layer': 'waterway',
+        filter: ['all', ['in', ['get','class'], ['literal',['river','canal']]], ['any',
+          ['in','长江', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','長江', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','黄河', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','黃河', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','Yangtze', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Chang Jiang', ['coalesce',['get','name'],['get','name_en'],'']],
+          ['in','Yellow River', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Huang He', ['coalesce',['get','name'],['get','name_en'],'']]
+        ]],
         paint: {
           'line-color': ['interpolate',['linear'],['zoom'],3,'#7CB9D2',7,'#4F99BA',12,'#327DA2'],
           'line-width': ['interpolate',['linear'],['zoom'],3,0.6,6,1.2,9,2.6,12,4.4],
