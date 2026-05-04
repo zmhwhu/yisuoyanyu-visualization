@@ -69,9 +69,9 @@ function buildAncientStyle(){
       { id: 'hillshade', type: 'hillshade', source: 'mapbox-dem',
         paint: {
           'hillshade-exaggeration': 0.5,
-          'hillshade-shadow-color': '#5B4A30',
-          'hillshade-highlight-color': '#F2E8CF',
-          'hillshade-accent-color': '#7A8C5E',
+          'hillshade-shadow-color': '#4F6643',
+          'hillshade-highlight-color': '#F1E5C5',
+          'hillshade-accent-color': '#6F8F5D',
           'hillshade-illumination-direction': 315,
           'hillshade-illumination-anchor': 'viewport'
         }
@@ -81,9 +81,9 @@ function buildAncientStyle(){
       { id: 'hillshade-tint', type: 'hillshade', source: 'mapbox-dem',
         paint: {
           'hillshade-exaggeration': 0.2,
-          'hillshade-shadow-color': 'rgba(60,90,55,0.55)',
+          'hillshade-shadow-color': 'rgba(50,84,48,0.58)',
           'hillshade-highlight-color': 'rgba(0,0,0,0)',
-          'hillshade-accent-color': 'rgba(110,140,90,0.4)',
+          'hillshade-accent-color': 'rgba(92,132,75,0.42)',
           'hillshade-illumination-direction': 315,
           'hillshade-illumination-anchor': 'viewport'
         }
@@ -92,33 +92,61 @@ function buildAncientStyle(){
       // Contour lines — subtle elevation
       { id: 'contour', type: 'line', source: 'terrain', 'source-layer': 'contour',
         paint: {
-          'line-color': '#9A8456',
+          'line-color': '#7F8C58',
           'line-width': ['interpolate',['linear'],['zoom'],6,0.15,10,0.4,14,0.7],
           'line-opacity': 0.22
         }
       },
 
-      // Ocean only — keep coastlines visible, drop inland lakes/reservoirs to reduce clutter
-      { id: 'water-ocean', type: 'fill', source: 'streets', 'source-layer': 'water',
-        filter: ['==',['get','class'],'ocean'],
+      // Historic river surfaces only — major waters tied to Su Shi's route
+      { id: 'water-historic-fill', type: 'fill', source: 'streets', 'source-layer': 'water',
+        filter: ['any',
+          ['in','长江', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','黄河', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','Yangtze', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Yellow River', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Min Jiang', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Jialing', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Han River', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Qiantang', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Huai', ['coalesce',['get','name_en'],['get','name'],'']]
+        ],
         paint: {
-          'fill-color': ['interpolate',['linear'],['zoom'],3,'#7FA8BE',7,'#5E8EAD',11,'#4A7A95'],
-          'fill-opacity': 0.92
+          'fill-color': '#5F9FC0',
+          'fill-opacity': ['interpolate',['linear'],['zoom'],3,0.38,8,0.5,12,0.62]
         }
       },
 
-      // Yangtze only — match common name variants in the basemap's name fields
-      { id: 'waterway-yangtze', type: 'line', source: 'streets', 'source-layer': 'waterway',
-        filter: ['any',
+      // Historic river lines — Yangtze, Yellow River, and route-region rivers
+      { id: 'waterway-historic-rivers', type: 'line', source: 'streets', 'source-layer': 'waterway',
+        filter: ['all', ['in', ['get','class'], ['literal',['river','canal']]], ['any',
           ['in','长江', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','黄河', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','岷江', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','嘉陵江', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','汉江', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','汉水', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','汴河', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','淮河', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','钱塘江', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
+          ['in','富春江', ['coalesce',['get','name_zh-Hans'],['get','name_zh-Hant'],['get','name'],'']],
           ['in','Yangtze', ['coalesce',['get','name_en'],['get','name'],'']],
           ['in','Chang Jiang', ['coalesce',['get','name'],['get','name_en'],'']],
-          ['in','Jinsha', ['coalesce',['get','name'],['get','name_en'],'']]
-        ],
+          ['in','Jinsha', ['coalesce',['get','name'],['get','name_en'],'']],
+          ['in','Yellow River', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Huang He', ['coalesce',['get','name'],['get','name_en'],'']],
+          ['in','Min Jiang', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Jialing', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Han River', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Han Shui', ['coalesce',['get','name'],['get','name_en'],'']],
+          ['in','Huai', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Qiantang', ['coalesce',['get','name_en'],['get','name'],'']],
+          ['in','Fuchun', ['coalesce',['get','name_en'],['get','name'],'']]
+        ]],
         paint: {
-          'line-color': '#3D6E88',
-          'line-width': ['interpolate',['linear'],['zoom'],3,1.4,7,3.2,12,6.5],
-          'line-opacity': 0.92
+          'line-color': ['interpolate',['linear'],['zoom'],3,'#6BA9C7',7,'#3E87AA',12,'#2F6F94'],
+          'line-width': ['interpolate',['linear'],['zoom'],3,1.3,6,2.4,9,4.6,12,6.2],
+          'line-opacity': 0.9
         },
         layout: { 'line-cap': 'round', 'line-join': 'round' }
       },
