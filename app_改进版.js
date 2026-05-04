@@ -700,6 +700,7 @@ document.getElementById('tw-seal').addEventListener('input', e=>{
 });
 
 buildRail();
+bindRibbonClicks();
 initMap();
 
 window.addEventListener('resize', ()=>{
