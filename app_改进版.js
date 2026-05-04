@@ -6,7 +6,7 @@ const WORKS = JSON.parse(document.getElementById('works-json').textContent);
 const CHAPTERS = DATA.chapters;
 
 const TWEAKS = /*EDITMODE-BEGIN*/{
-  "terrainExaggeration": 1.8,
+  "terrainExaggeration": 1.2,
   "weatherOn": true,
   "inkOn": true,
   "sealColor": "#A83A38"
@@ -68,7 +68,7 @@ function buildAncientStyle(){
       // Primary hillshade — clear, warm, v4-style topo shading
       { id: 'hillshade', type: 'hillshade', source: 'mapbox-dem',
         paint: {
-          'hillshade-exaggeration': 0.5,
+          'hillshade-exaggeration': 0.34,
           'hillshade-shadow-color': '#5B4A30',
           'hillshade-highlight-color': '#F2E8CF',
           'hillshade-accent-color': '#7A8C5E',
@@ -80,10 +80,10 @@ function buildAncientStyle(){
       // Secondary hillshade — soft greenish accent on shaded slopes (gives terrain colour without obscuring)
       { id: 'hillshade-tint', type: 'hillshade', source: 'mapbox-dem',
         paint: {
-          'hillshade-exaggeration': 0.2,
-          'hillshade-shadow-color': 'rgba(60,90,55,0.55)',
+          'hillshade-exaggeration': 0.12,
+          'hillshade-shadow-color': 'rgba(60,90,55,0.34)',
           'hillshade-highlight-color': 'rgba(0,0,0,0)',
-          'hillshade-accent-color': 'rgba(110,140,90,0.4)',
+          'hillshade-accent-color': 'rgba(110,140,90,0.22)',
           'hillshade-illumination-direction': 315,
           'hillshade-illumination-anchor': 'viewport'
         }
@@ -94,7 +94,7 @@ function buildAncientStyle(){
         paint: {
           'line-color': '#9A8456',
           'line-width': ['interpolate',['linear'],['zoom'],6,0.15,10,0.4,14,0.7],
-          'line-opacity': 0.22
+          'line-opacity': 0.14
         }
       },
 
@@ -156,6 +156,7 @@ let visited = new Set();
 let markers = [];
 let utaiShown = false;
 let firstLoad = true;
+let ribbonHitPoints = [];
 
 function start(){
   document.getElementById('title-stage').classList.add('gone');
@@ -608,6 +609,29 @@ function drawRibbon(currentIdx){
     ctx.fillText(p.title, x(i), H-6*dpr);
   });
   ctx.textAlign='left';
+}
+
+function ribbonPointAtEvent(ev){
+  const c = document.getElementById('rb-canvas');
+  const rect = c.getBoundingClientRect();
+  const px = ev.clientX - rect.left;
+  const py = ev.clientY - rect.top;
+  let best = null;
+  ribbonHitPoints.forEach(p=>{
+    const d = Math.hypot(px-p.x, py-p.y);
+    if(d <= 20 && (!best || d < best.d)) best = {...p, d};
+  });
+  return best ? best.i : -1;
+}
+function bindRibbonClicks(){
+  const c = document.getElementById('rb-canvas');
+  c.addEventListener('click', ev=>{
+    const idx = ribbonPointAtEvent(ev);
+    if(idx >= 0) goto(idx);
+  });
+  c.addEventListener('mousemove', ev=>{
+    c.style.cursor = ribbonPointAtEvent(ev) >= 0 ? 'pointer' : 'default';
+  });
 }
 
 function overview(){

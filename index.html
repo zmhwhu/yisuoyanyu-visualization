@@ -396,6 +396,37 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
   #rail{width:80px}
   #nav-btns{left:100px;bottom:195px}
 }
+
+
+/* ============ REFINED DEPLOY TUNING ============ */
+#map-veil{opacity:.72}
+.w-layer.on{opacity:.58}
+.w-rain::after{background:rgba(10,15,25,.12)}
+.w-mist{opacity:.74}
+.w-moon{opacity:.72}
+.w-sea{opacity:.66}
+.w-heat{opacity:.68}
+.w-dawn{opacity:.7}
+.w-snow{opacity:.64}
+
+.poem-col{
+  color:#F4EFE5;
+  text-shadow:none;
+  background:linear-gradient(to left, rgba(20,17,12,.22), rgba(20,17,12,.06) 70%, transparent);
+}
+.poem-col.show{opacity:.94}
+.poem-col:hover{
+  background:linear-gradient(to left, rgba(20,17,12,.30), rgba(20,17,12,.08) 70%, transparent);
+}
+.poem-col .pc-title{
+  color:#B95C54;
+  text-shadow:none;
+}
+.poem-col .pc-body{color:#F4EFE5;text-shadow:none}
+.poem-col.primary .pc-body{color:#F4EFE5;text-shadow:none}
+.poem-col.secondary .pc-body{opacity:.92}
+.poem-col.tertiary .pc-body{opacity:.86}
+#rb-canvas{pointer-events:auto;cursor:pointer}
 </style>
 </head>
 <body>
@@ -510,7 +541,7 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 
 <div id="tweaks">
   <div class="tw-title">调 参</div>
-  <div class="tw-row"><label>地形起伏</label><input type="range" id="tw-terrain" min="0" max="3" step="0.1" value="1.8"></div>
+  <div class="tw-row"><label>地形起伏</label><input type="range" id="tw-terrain" min="0" max="3" step="0.1" value="1.2"></div>
   <div class="tw-row"><label>天气图层</label><input type="checkbox" id="tw-weather" checked=""></div>
   <div class="tw-row"><label>墨迹文字</label><input type="checkbox" id="tw-ink" checked=""></div>
   <div class="tw-row"><label>印朱色</label><input type="color" id="tw-seal" value="#A83A38"></div>
