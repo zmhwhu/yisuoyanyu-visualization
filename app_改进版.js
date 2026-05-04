@@ -48,6 +48,32 @@ function buildAncientStyle(){
         type: 'raster-dem',
         url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
         tileSize: 512, maxzoom: 14
+      },
+      'historic-rivers': {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: [
+            {
+              type: 'Feature',
+              properties: { name: 'Yangtze River' },
+              geometry: { type: 'LineString', coordinates: [
+                [91.2,33.5],[95.5,32.4],[99.0,31.3],[101.7,30.9],[104.1,30.7],[105.4,29.3],
+                [106.6,29.6],[108.4,30.8],[111.3,30.7],[114.3,30.6],[116.0,29.7],[117.2,30.5],
+                [118.8,31.6],[120.2,31.7],[121.6,31.3]
+              ] }
+            },
+            {
+              type: 'Feature',
+              properties: { name: 'Yellow River' },
+              geometry: { type: 'LineString', coordinates: [
+                [96.2,35.0],[99.6,34.8],[102.1,35.8],[103.8,36.1],[106.2,37.6],[108.7,40.3],
+                [111.6,40.8],[110.5,37.8],[110.8,35.6],[112.6,34.8],[113.7,34.9],[115.1,35.6],
+                [117.0,36.5],[118.7,37.8],[119.1,38.1]
+              ] }
+            }
+          ]
+        }
       }
     },
     terrain: { source: 'mapbox-dem', exaggeration: TWEAKS.terrainExaggeration },
@@ -98,46 +124,20 @@ function buildAncientStyle(){
         }
       },
 
-      // River and water network - broad class layer first so water remains visible at all zooms
-      { id: 'water-historic-fill', type: 'fill', source: 'streets', 'source-layer': 'water',
-        filter: ['in', ['get','class'], ['literal',['river','canal']]],
+      // Yangtze and Yellow River - custom source keeps both rivers visible at every zoom
+      { id: 'historic-rivers-outline', type: 'line', source: 'historic-rivers',
         paint: {
-          'fill-color': '#67A9CC',
-          'fill-opacity': ['interpolate',['linear'],['zoom'],3,0.34,7,0.44,12,0.56]
-        }
-      },
-
-      { id: 'waterway-major-rivers', type: 'line', source: 'streets', 'source-layer': 'waterway',
-        filter: ['in', ['get','class'], ['literal',['river','canal']]],
-        paint: {
-          'line-color': ['interpolate',['linear'],['zoom'],3,'#74B4D2',7,'#4C95BA',12,'#34799F'],
-          'line-width': ['interpolate',['linear'],['zoom'],3,0.9,6,1.8,9,3.2,12,4.8],
-          'line-opacity': ['interpolate',['linear'],['zoom'],3,0.58,7,0.7,12,0.78]
+          'line-color': 'rgba(232,217,182,0.72)',
+          'line-width': ['interpolate',['linear'],['zoom'],3,2.0,6,3.4,9,6.0,12,8.5],
+          'line-opacity': 0.78
         },
         layout: { 'line-cap': 'round', 'line-join': 'round' }
       },
-
-      // Named route rivers - stronger highlight when Mapbox tiles include river names
-      { id: 'waterway-historic-rivers', type: 'line', source: 'streets', 'source-layer': 'waterway',
-        filter: ['all', ['in', ['get','class'], ['literal',['river','canal']]], ['any',
-          ['in','Yangtze', ['coalesce',['get','name_en'],['get','name'],'']],
-          ['in','Chang Jiang', ['coalesce',['get','name'],['get','name_en'],'']],
-          ['in','Jinsha', ['coalesce',['get','name'],['get','name_en'],'']],
-          ['in','Yellow River', ['coalesce',['get','name_en'],['get','name'],'']],
-          ['in','Huang He', ['coalesce',['get','name'],['get','name_en'],'']],
-          ['in','Min Jiang', ['coalesce',['get','name_en'],['get','name'],'']],
-          ['in','Jialing', ['coalesce',['get','name_en'],['get','name'],'']],
-          ['in','Han River', ['coalesce',['get','name_en'],['get','name'],'']],
-          ['in','Han Shui', ['coalesce',['get','name'],['get','name_en'],'']],
-          ['in','Bian', ['coalesce',['get','name_en'],['get','name'],'']],
-          ['in','Huai', ['coalesce',['get','name_en'],['get','name'],'']],
-          ['in','Qiantang', ['coalesce',['get','name_en'],['get','name'],'']],
-          ['in','Fuchun', ['coalesce',['get','name_en'],['get','name'],'']]
-        ]],
+      { id: 'historic-rivers', type: 'line', source: 'historic-rivers',
         paint: {
-          'line-color': ['interpolate',['linear'],['zoom'],3,'#8AC6DD',7,'#3E8EB5',12,'#236D95'],
-          'line-width': ['interpolate',['linear'],['zoom'],3,1.4,6,2.7,9,5.0,12,6.8],
-          'line-opacity': 0.95
+          'line-color': ['interpolate',['linear'],['zoom'],3,'#6FB4D2',7,'#3F90B8',12,'#26749F'],
+          'line-width': ['interpolate',['linear'],['zoom'],3,1.1,6,2.2,9,4.3,12,6.4],
+          'line-opacity': 0.9
         },
         layout: { 'line-cap': 'round', 'line-join': 'round' }
       },
