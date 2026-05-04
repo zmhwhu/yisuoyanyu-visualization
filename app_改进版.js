@@ -611,37 +611,39 @@ function drawRibbon(currentIdx){
   ctx.textAlign='left';
 }
 
-function ribbonPointAtEvent(ev){
+function ribbonIndexAtEvent(ev){
   const c = document.getElementById('rb-canvas');
   const rect = c.getBoundingClientRect();
   const px = ev.clientX - rect.left;
   const py = ev.clientY - rect.top;
-  let best = null;
-  ribbonHitPoints.forEach(p=>{
-    const d = Math.hypot(px-p.x, py-p.y);
-    if(d <= 24 && (!best || d < best.d)) best = {...p, d};
-  });
-  if(best) return best.i;
-  if(py < 0 || py > rect.height) return -1;
-  const columns = [];
-  ribbonHitPoints.forEach(p=>{
-    if(!columns.some(col=>col.i===p.i)) columns.push({i:p.i, x:p.x});
-  });
-  columns.forEach(col=>{
-    const d = Math.abs(px-col.x);
-    if(d <= Math.max(28, rect.width/(CHAPTERS.length-1)/3) && (!best || d < best.d)) best = {...col, d};
-  });
-  return best ? best.i : -1;
+  if(px < 0 || px > rect.width || py < -18 || py > rect.height + 26) return -1;
+  if(ribbonHitPoints.length){
+    let best = null;
+    ribbonHitPoints.forEach(p=>{
+      const d = Math.hypot(px-p.x, py-p.y);
+      if(d <= 26 && (!best || d < best.d)) best = {...p, d};
+    });
+    if(best) return best.i;
+  }
+  const pad = 30;
+  const usable = Math.max(1, rect.width - pad*2);
+  const raw = Math.round(((px - pad) / usable) * (CHAPTERS.length - 1));
+  return Math.max(0, Math.min(CHAPTERS.length - 1, raw));
 }
 function bindRibbonClicks(){
-  const c = document.getElementById('rb-canvas');
-  c.addEventListener('click', ev=>{
-    const idx = ribbonPointAtEvent(ev);
-    if(idx >= 0) goto(idx);
-  });
-  c.addEventListener('mousemove', ev=>{
-    c.style.cursor = ribbonPointAtEvent(ev) >= 0 ? 'pointer' : 'default';
-  });
+  const ribbon = document.getElementById('ribbon');
+  const canvas = document.getElementById('rb-canvas');
+  const handle = ev=>{
+    const idx = ribbonIndexAtEvent(ev);
+    if(idx >= 0){ ev.preventDefault(); goto(idx); }
+  };
+  const updateCursor = ev=>{
+    const active = ribbonIndexAtEvent(ev) >= 0;
+    canvas.style.cursor = active ? 'pointer' : 'default';
+    ribbon.style.cursor = active ? 'pointer' : 'default';
+  };
+  ribbon.addEventListener('click', handle);
+  ribbon.addEventListener('mousemove', updateCursor);
 }
 
 function overview(){
