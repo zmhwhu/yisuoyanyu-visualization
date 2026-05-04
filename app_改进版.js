@@ -619,7 +619,17 @@ function ribbonPointAtEvent(ev){
   let best = null;
   ribbonHitPoints.forEach(p=>{
     const d = Math.hypot(px-p.x, py-p.y);
-    if(d <= 20 && (!best || d < best.d)) best = {...p, d};
+    if(d <= 24 && (!best || d < best.d)) best = {...p, d};
+  });
+  if(best) return best.i;
+  if(py < 0 || py > rect.height) return -1;
+  const columns = [];
+  ribbonHitPoints.forEach(p=>{
+    if(!columns.some(col=>col.i===p.i)) columns.push({i:p.i, x:p.x});
+  });
+  columns.forEach(col=>{
+    const d = Math.abs(px-col.x);
+    if(d <= Math.max(28, rect.width/(CHAPTERS.length-1)/3) && (!best || d < best.d)) best = {...col, d};
   });
   return best ? best.i : -1;
 }
