@@ -6,7 +6,7 @@ const WORKS = JSON.parse(document.getElementById('works-json').textContent);
 const CHAPTERS = DATA.chapters;
 
 const TWEAKS = /*EDITMODE-BEGIN*/{
-  "terrainExaggeration": 1.2,
+  "terrainExaggeration": 1.8,
   "weatherOn": true,
   "inkOn": true,
   "sealColor": "#A83A38"
@@ -68,7 +68,7 @@ function buildAncientStyle(){
       // Primary hillshade — clear, warm, v4-style topo shading
       { id: 'hillshade', type: 'hillshade', source: 'mapbox-dem',
         paint: {
-          'hillshade-exaggeration': 0.34,
+          'hillshade-exaggeration': 0.5,
           'hillshade-shadow-color': '#5B4A30',
           'hillshade-highlight-color': '#F2E8CF',
           'hillshade-accent-color': '#7A8C5E',
@@ -80,10 +80,10 @@ function buildAncientStyle(){
       // Secondary hillshade — soft greenish accent on shaded slopes (gives terrain colour without obscuring)
       { id: 'hillshade-tint', type: 'hillshade', source: 'mapbox-dem',
         paint: {
-          'hillshade-exaggeration': 0.12,
-          'hillshade-shadow-color': 'rgba(60,90,55,0.34)',
+          'hillshade-exaggeration': 0.2,
+          'hillshade-shadow-color': 'rgba(60,90,55,0.55)',
           'hillshade-highlight-color': 'rgba(0,0,0,0)',
-          'hillshade-accent-color': 'rgba(110,140,90,0.22)',
+          'hillshade-accent-color': 'rgba(110,140,90,0.4)',
           'hillshade-illumination-direction': 315,
           'hillshade-illumination-anchor': 'viewport'
         }
@@ -94,7 +94,7 @@ function buildAncientStyle(){
         paint: {
           'line-color': '#9A8456',
           'line-width': ['interpolate',['linear'],['zoom'],6,0.15,10,0.4,14,0.7],
-          'line-opacity': 0.14
+          'line-opacity': 0.22
         }
       },
 

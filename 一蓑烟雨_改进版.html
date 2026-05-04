@@ -7,7 +7,7 @@
 <title>一蓑烟雨任平生 · 苏轼漫游</title>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
-<script src="config.js?v=20260504-refine1"></script>
+<script src="config.js?v=20260505-weather1"></script>
 <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&amp;family=Noto+Serif+SC:wght@300;400;500;600;700;900&amp;family=ZCOOL+XiaoWei&amp;family=ZCOOL+QingKe+HuangYou&amp;family=Long+Cang&amp;display=swap" rel="stylesheet">
 <style>
 :root{
@@ -398,34 +398,36 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 }
 
 
+
+
 /* ============ REFINED DEPLOY TUNING ============ */
-#map-veil{opacity:.72}
-.w-layer.on{opacity:.58}
-.w-rain::after{background:rgba(10,15,25,.12)}
-.w-mist{opacity:.74}
-.w-moon{opacity:.72}
-.w-sea{opacity:.66}
-.w-heat{opacity:.68}
-.w-dawn{opacity:.7}
-.w-snow{opacity:.64}
+#weather{opacity:.46}
+#map-veil{opacity:.9}
+.w-layer.on{opacity:.7}
+.w-rain::after{background:rgba(10,15,25,.10)}
+.w-mist{opacity:.62}
+.w-moon{opacity:.68}
+.w-sea{opacity:.62}
+.w-heat{opacity:.62}
+.w-dawn{opacity:.66}
+.w-snow{opacity:.38}
+.w-snow::before,.w-snow::after{opacity:.32}
 
 .poem-col{
   color:#F4EFE5;
-  text-shadow:none;
-  background:linear-gradient(to left, rgba(20,17,12,.22), rgba(20,17,12,.06) 70%, transparent);
+  text-shadow:none!important;
+  background:transparent!important;
 }
-.poem-col.show{opacity:.94}
-.poem-col:hover{
-  background:linear-gradient(to left, rgba(20,17,12,.30), rgba(20,17,12,.08) 70%, transparent);
-}
+.poem-col.show{opacity:.96}
+.poem-col:hover{background:transparent!important}
 .poem-col .pc-title{
-  color:#B95C54;
-  text-shadow:none;
+  color:#C96359;
+  text-shadow:none!important;
 }
-.poem-col .pc-body{color:#F4EFE5;text-shadow:none}
-.poem-col.primary .pc-body{color:#F4EFE5;text-shadow:none}
-.poem-col.secondary .pc-body{opacity:.92}
-.poem-col.tertiary .pc-body{opacity:.86}
+.poem-col .pc-body{color:#F4EFE5;text-shadow:none!important}
+.poem-col.primary .pc-body{color:#F4EFE5;text-shadow:none!important}
+.poem-col.secondary .pc-body{opacity:.94}
+.poem-col.tertiary .pc-body{opacity:.9}
 #ribbon,.rb-inner{pointer-events:auto}
 #rb-canvas{pointer-events:auto;cursor:pointer}
 </style>
@@ -542,7 +544,7 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 
 <div id="tweaks">
   <div class="tw-title">调 参</div>
-  <div class="tw-row"><label>地形起伏</label><input type="range" id="tw-terrain" min="0" max="3" step="0.1" value="1.2"></div>
+  <div class="tw-row"><label>地形起伏</label><input type="range" id="tw-terrain" min="0" max="3" step="0.1" value="1.8"></div>
   <div class="tw-row"><label>天气图层</label><input type="checkbox" id="tw-weather" checked=""></div>
   <div class="tw-row"><label>墨迹文字</label><input type="checkbox" id="tw-ink" checked=""></div>
   <div class="tw-row"><label>印朱色</label><input type="color" id="tw-seal" value="#A83A38"></div>
@@ -749,7 +751,7 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 </script>
 
 <script src="vendor/turf.min.js?v=6.5.0"></script>
-<script src="app_改进版.js?v=20260504-refine5"></script>
+<script src="app_改进版.js?v=20260505-weather1"></script>
 
 
 </body></html>
