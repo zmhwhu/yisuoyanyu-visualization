@@ -7,7 +7,7 @@
 <title>一蓑烟雨任平生 · 苏轼漫游</title>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
-<script src="config.js?v=20260505-digital-guide3"></script>
+<script src="config.js?v=20260506-dongpo-webp1"></script>
 <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&amp;family=Noto+Serif+SC:wght@300;400;500;600;700;900&amp;family=ZCOOL+XiaoWei&amp;family=ZCOOL+QingKe+HuangYou&amp;family=Long+Cang&amp;display=swap" rel="stylesheet">
 <style>
 :root{
@@ -418,7 +418,9 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 /* ============ DIGITAL DONGPO REFINEMENT ============ */
 @keyframes dongpoFloat{0%,100%{transform:translateY(0) rotate(-.4deg) scale(1)}45%{transform:translateY(-10px) rotate(.6deg) scale(1.018)}70%{transform:translateY(-4px) rotate(0) scale(1.006)}}
 .dongpo-figure{position:relative}.dongpo-figure::after{content:'';position:absolute;left:18%;right:18%;bottom:.4rem;height:22px;background:radial-gradient(ellipse,rgba(0,0,0,.28),rgba(0,0,0,0) 70%);filter:blur(8px);opacity:.7;animation:dongpoShadow 4.8s ease-in-out infinite}@keyframes dongpoShadow{0%,100%{transform:scaleX(1);opacity:.62}45%{transform:scaleX(.82);opacity:.42}}
-.dongpo-figure img{mix-blend-mode:normal;animation:dongpoFloat 4.8s ease-in-out infinite;transform-origin:50% 92%;filter:brightness(1.18) contrast(1.04) saturate(1.08) drop-shadow(0 18px 26px rgba(0,0,0,.24))!important}
+.dongpo-figure img{width:min(100%,300px);max-height:min(62vh,560px);object-fit:contain;object-position:center bottom;mix-blend-mode:normal;animation:dongpoFloat 4.8s ease-in-out infinite;transform-origin:50% 92%;filter:brightness(1.08) contrast(1.03) saturate(1.04) drop-shadow(0 18px 26px rgba(0,0,0,.24))!important}
+.tour-tip-head img{object-position:center 14%;background:transparent}
+@media (max-width: 760px){.dongpo-figure img{width:min(72vw,210px);max-height:34vh}}
 .ask-panel{grid-template-rows:auto 1fr auto auto}.ask-chips{display:none!important}.ask-hint{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem;max-width:100%;color:rgba(244,239,229,.82)}.ask-quick{cursor:pointer;border:1px solid rgba(242,232,207,.16);background:rgba(242,232,207,.06);padding:.55rem .72rem;color:rgba(244,239,229,.82);font-family:'Noto Serif SC',serif;font-size:.78rem;letter-spacing:.06em;transition:background .25s,border-color .25s,color .25s}.ask-quick:hover{background:rgba(168,58,56,.22);border-color:rgba(168,58,56,.55);color:#F4EFE5}
 
 /* ============ REFINED DEPLOY TUNING ============ */
@@ -541,9 +543,9 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 
 <button id="tour-help" class="guide-help" type="button" aria-label="Guide">?</button>
 
-<div id="narration-modal" class="dongpo-modal" aria-hidden="true"><div class="dongpo-panel" role="dialog" aria-modal="true" aria-labelledby="narration-title"><button class="dongpo-close" id="narration-close" type="button" aria-label="Close">&times;</button><div class="dongpo-figure"><img src="assets/sushi.png" alt="Su Shi"></div><div class="narration-content"><div class="narration-kicker" id="narration-kicker">DONGPO NARRATES</div><div class="narration-title" id="narration-title"></div><div class="narration-text" id="narration-text"></div><div class="audio-box"><button class="audio-btn" id="narration-play" type="button">&#9654;</button><input class="audio-range" id="narration-range" type="range" min="0" max="1000" value="0"><div class="audio-time" id="narration-time">00:00</div></div></div></div></div>
+<div id="narration-modal" class="dongpo-modal" aria-hidden="true"><div class="dongpo-panel" role="dialog" aria-modal="true" aria-labelledby="narration-title"><button class="dongpo-close" id="narration-close" type="button" aria-label="Close">&times;</button><div class="dongpo-figure"><img src="sushi_body_fan_breathing.webp" alt="Su Shi"></div><div class="narration-content"><div class="narration-kicker" id="narration-kicker">DONGPO NARRATES</div><div class="narration-title" id="narration-title"></div><div class="narration-text" id="narration-text"></div><div class="audio-box"><button class="audio-btn" id="narration-play" type="button">&#9654;</button><input class="audio-range" id="narration-range" type="range" min="0" max="1000" value="0"><div class="audio-time" id="narration-time">00:00</div></div></div></div></div>
 <div id="ask-modal" class="dongpo-modal" aria-hidden="true"><div class="ask-panel" role="dialog" aria-modal="true" aria-labelledby="ask-title"><div class="ask-head"><span id="ask-title">&#38382; &#183; &#19996;&#22369;</span><button class="dongpo-close" id="ask-close" type="button" aria-label="Close">&times;</button></div><div class="ask-chips" id="ask-chips"></div><div class="ask-log" id="ask-log"></div><div class="ask-form"><input class="ask-input" id="ask-input" type="text" autocomplete="off"><button class="ask-send" id="ask-send" type="button">&#38382;</button></div><div class="ask-hint" id="ask-hint"></div></div></div>
-<div id="tour-shade" class="tour-shade" aria-hidden="true"><div id="tour-highlight" class="tour-highlight"></div><div id="tour-tip" class="tour-tip"><div class="tour-tip-head"><img src="assets/sushi.png" alt=""><span id="tour-step-title"></span></div><div class="tour-tip-body" id="tour-step-body"></div><div class="tour-actions"><button type="button" id="tour-skip">&#36339;&#36807;</button><button type="button" class="primary" id="tour-next">&#19979;&#19968;&#27493;</button></div></div></div>
+<div id="tour-shade" class="tour-shade" aria-hidden="true"><div id="tour-highlight" class="tour-highlight"></div><div id="tour-tip" class="tour-tip"><div class="tour-tip-head"><img src="sushi_body_fan_breathing.webp" alt=""><span id="tour-step-title"></span></div><div class="tour-tip-body" id="tour-step-body"></div><div class="tour-actions"><button type="button" id="tour-skip">&#36339;&#36807;</button><button type="button" class="primary" id="tour-next">&#19979;&#19968;&#27493;</button></div></div></div>
 
 <div id="title-stage">
   <div class="t-bg-char a">东</div>
@@ -769,7 +771,7 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 </script>
 
 <script src="vendor/turf.min.js?v=6.5.0"></script>
-<script src="app_改进版.js?v=20260505-digital-guide3"></script>
+<script src="app_改进版.js?v=20260506-dongpo-webp1"></script>
 
 
 </body></html>
