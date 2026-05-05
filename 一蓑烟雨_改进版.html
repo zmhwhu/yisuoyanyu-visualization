@@ -7,7 +7,7 @@
 <title>一蓑烟雨任平生 · 苏轼漫游</title>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
-<script src="config.js?v=20260505-digital-guide2"></script>
+<script src="config.js?v=20260505-digital-guide3"></script>
 <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&amp;family=Noto+Serif+SC:wght@300;400;500;600;700;900&amp;family=ZCOOL+XiaoWei&amp;family=ZCOOL+QingKe+HuangYou&amp;family=Long+Cang&amp;display=swap" rel="stylesheet">
 <style>
 :root{
@@ -418,8 +418,8 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 /* ============ DIGITAL DONGPO REFINEMENT ============ */
 @keyframes dongpoFloat{0%,100%{transform:translateY(0) rotate(-.4deg) scale(1)}45%{transform:translateY(-10px) rotate(.6deg) scale(1.018)}70%{transform:translateY(-4px) rotate(0) scale(1.006)}}
 .dongpo-figure{position:relative}.dongpo-figure::after{content:'';position:absolute;left:18%;right:18%;bottom:.4rem;height:22px;background:radial-gradient(ellipse,rgba(0,0,0,.28),rgba(0,0,0,0) 70%);filter:blur(8px);opacity:.7;animation:dongpoShadow 4.8s ease-in-out infinite}@keyframes dongpoShadow{0%,100%{transform:scaleX(1);opacity:.62}45%{transform:scaleX(.82);opacity:.42}}
-.dongpo-figure img{mix-blend-mode:multiply;animation:dongpoFloat 4.8s ease-in-out infinite;transform-origin:50% 92%;filter:contrast(1.06) saturate(1.08) drop-shadow(0 18px 26px rgba(0,0,0,.32))!important}
-.ask-panel{grid-template-rows:auto 1fr auto auto}.ask-chips{display:none!important}.ask-hint{display:inline-flex;align-items:center;justify-content:flex-start;width:max-content;max-width:100%;cursor:pointer;border:1px solid rgba(242,232,207,.16);background:rgba(242,232,207,.06);padding:.55rem .72rem;color:rgba(244,239,229,.82);transition:background .25s,border-color .25s,color .25s}.ask-hint:hover{background:rgba(168,58,56,.22);border-color:rgba(168,58,56,.55);color:#F4EFE5}
+.dongpo-figure img{mix-blend-mode:normal;animation:dongpoFloat 4.8s ease-in-out infinite;transform-origin:50% 92%;filter:brightness(1.18) contrast(1.04) saturate(1.08) drop-shadow(0 18px 26px rgba(0,0,0,.24))!important}
+.ask-panel{grid-template-rows:auto 1fr auto auto}.ask-chips{display:none!important}.ask-hint{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem;max-width:100%;color:rgba(244,239,229,.82)}.ask-quick{cursor:pointer;border:1px solid rgba(242,232,207,.16);background:rgba(242,232,207,.06);padding:.55rem .72rem;color:rgba(244,239,229,.82);font-family:'Noto Serif SC',serif;font-size:.78rem;letter-spacing:.06em;transition:background .25s,border-color .25s,color .25s}.ask-quick:hover{background:rgba(168,58,56,.22);border-color:rgba(168,58,56,.55);color:#F4EFE5}
 
 /* ============ REFINED DEPLOY TUNING ============ */
 #weather{opacity:.8}
@@ -769,7 +769,7 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 </script>
 
 <script src="vendor/turf.min.js?v=6.5.0"></script>
-<script src="app_改进版.js?v=20260505-digital-guide2"></script>
+<script src="app_改进版.js?v=20260505-digital-guide3"></script>
 
 
 </body></html>
