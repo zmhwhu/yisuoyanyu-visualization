@@ -7,7 +7,7 @@
 <title>一蓑烟雨任平生 · 苏轼漫游</title>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
-<script src="config.js?v=20260505-water-boundaries1"></script>
+<script src="config.js?v=20260505-digital-guide1"></script>
 <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&amp;family=Noto+Serif+SC:wght@300;400;500;600;700;900&amp;family=ZCOOL+XiaoWei&amp;family=ZCOOL+QingKe+HuangYou&amp;family=Long+Cang&amp;display=swap" rel="stylesheet">
 <style>
 :root{
@@ -401,6 +401,19 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 
 
 
+
+/* ============ DIGITAL DONGPO + TOUR ============ */
+.pl-narrate-btn{margin-top:1rem;width:100%;border:1px solid rgba(168,58,56,.45);background:rgba(242,232,207,.08);color:var(--paper);font-family:'Noto Serif SC',serif;font-size:.82rem;letter-spacing:.18em;padding:.72rem .9rem;cursor:pointer;transition:background .3s,border-color .3s,transform .3s}
+.pl-narrate-btn:hover{background:rgba(168,58,56,.22);border-color:rgba(168,58,56,.82);transform:translateY(-1px)}
+.guide-help{position:absolute;right:1.2rem;top:1.2rem;z-index:180;width:34px;height:34px;border-radius:50%;border:1px solid rgba(242,232,207,.35);background:rgba(20,17,12,.48);color:var(--paper);font-family:'ZCOOL XiaoWei',serif;font-size:1.1rem;cursor:pointer;opacity:.78;transition:opacity .25s,background .25s}.guide-help:hover{opacity:1;background:rgba(168,58,56,.38)}
+.dongpo-modal{position:fixed;inset:0;z-index:260;display:flex;align-items:center;justify-content:center;background:rgba(20,17,12,.92);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s,visibility .35s;padding:2rem}.dongpo-modal.on{opacity:1;visibility:visible;pointer-events:auto}
+.dongpo-panel{position:relative;width:min(920px,92vw);max-height:86vh;display:grid;grid-template-columns:minmax(180px,330px) minmax(0,1fr);gap:2rem;border:1px solid rgba(242,232,207,.18);background:linear-gradient(135deg,rgba(48,38,28,.95),rgba(20,17,12,.96));box-shadow:0 24px 80px rgba(0,0,0,.45);padding:2rem;overflow:hidden}.dongpo-close{position:absolute;right:1rem;top:1rem;width:34px;height:34px;border:1px solid rgba(242,232,207,.22);background:rgba(255,255,255,.04);color:var(--paper);cursor:pointer;font-size:1.2rem;line-height:1}.dongpo-figure{display:flex;align-items:flex-end;justify-content:center;border-right:1px solid rgba(242,232,207,.12);padding-right:1.2rem;min-height:300px}.dongpo-figure img{max-width:100%;max-height:50vh;object-fit:contain;filter:drop-shadow(0 16px 24px rgba(0,0,0,.35))}
+.narration-content{display:flex;flex-direction:column;min-width:0;color:var(--paper)}.narration-kicker{font-size:.72rem;letter-spacing:.32em;color:var(--seal);margin-bottom:.6rem}.narration-title{font-family:'ZCOOL XiaoWei',serif;font-size:2.4rem;letter-spacing:.14em;font-weight:400;margin-bottom:1rem;color:#F4EFE5}.narration-text{font-size:1rem;line-height:2.05;letter-spacing:.06em;color:#F4EFE5;opacity:.92;overflow:auto;padding-right:.5rem}.audio-box{margin-top:1.4rem;display:grid;grid-template-columns:42px 1fr 74px;gap:.85rem;align-items:center;color:#F4EFE5}.audio-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(242,232,207,.28);background:rgba(168,58,56,.35);color:#F4EFE5;cursor:pointer;font-size:1rem}.audio-range{width:100%;accent-color:var(--seal)}.audio-time{font-size:.72rem;letter-spacing:.04em;opacity:.78;text-align:right}
+.ask-entry{position:absolute;left:50%;bottom:6.5rem;transform:translateX(-50%);z-index:4;opacity:0;visibility:hidden;transition:opacity 1s,visibility 1s,transform 1s;border:1px solid rgba(168,58,56,.6);background:rgba(20,17,12,.62);color:var(--paper);font-family:'ZCOOL XiaoWei',serif;font-size:1rem;letter-spacing:.2em;padding:.8rem 1.4rem;cursor:pointer}.ask-entry.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(-4px)}
+.ask-panel{width:min(760px,94vw);height:min(720px,86vh);display:grid;grid-template-rows:auto auto 1fr auto auto;gap:1rem;background:linear-gradient(135deg,rgba(45,36,27,.97),rgba(17,15,12,.98));border:1px solid rgba(242,232,207,.18);padding:1.4rem;box-shadow:0 22px 80px rgba(0,0,0,.5)}.ask-head{display:flex;align-items:center;justify-content:space-between;color:#F4EFE5;font-family:'ZCOOL XiaoWei',serif;font-size:1.5rem;letter-spacing:.16em}.ask-chips{display:flex;flex-wrap:wrap;gap:.5rem}.ask-chip{border:1px solid rgba(242,232,207,.22);background:rgba(242,232,207,.06);color:#F4EFE5;padding:.4rem .75rem;font-size:.78rem;letter-spacing:.08em;cursor:pointer}.ask-chip.active{border-color:rgba(168,58,56,.86);background:rgba(168,58,56,.26)}.ask-log{overflow:auto;border:1px solid rgba(242,232,207,.1);background:rgba(0,0,0,.18);padding:1rem;display:flex;flex-direction:column;gap:.9rem}.ask-msg{max-width:78%;padding:.75rem .9rem;line-height:1.75;font-size:.92rem;letter-spacing:.03em;color:#F4EFE5;white-space:pre-wrap}.ask-msg.user{align-self:flex-end;background:rgba(242,232,207,.14);border:1px solid rgba(242,232,207,.16)}.ask-msg.bot{align-self:flex-start;background:rgba(255,255,255,.07);border:1px solid rgba(168,58,56,.22)}.ask-form{display:grid;grid-template-columns:1fr auto;gap:.7rem}.ask-input{background:rgba(242,232,207,.08);border:1px solid rgba(242,232,207,.18);color:#F4EFE5;padding:.75rem .85rem;font-family:'Noto Serif SC',serif;outline:none}.ask-send{border:1px solid rgba(168,58,56,.7);background:rgba(168,58,56,.32);color:#F4EFE5;padding:0 1.2rem;cursor:pointer;letter-spacing:.12em}.ask-hint{font-size:.78rem;color:rgba(242,232,207,.62);letter-spacing:.08em}
+.tour-shade{position:fixed;inset:0;z-index:240;background:rgba(10,8,6,.58);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s,visibility .35s}.tour-shade.on{opacity:1;visibility:visible;pointer-events:auto}.tour-highlight{position:fixed;z-index:242;border:1px solid rgba(244,239,229,.86);box-shadow:0 0 0 9999px rgba(10,8,6,.58),0 0 22px rgba(244,239,229,.22);pointer-events:none;transition:all .35s;border-radius:6px}.tour-tip{position:fixed;z-index:243;width:min(330px,86vw);background:rgba(244,239,229,.96);color:#21180f;border:1px solid rgba(168,58,56,.34);padding:1rem 1.05rem;box-shadow:0 16px 42px rgba(0,0,0,.28);transition:left .35s,top .35s}.tour-tip-head{display:flex;align-items:center;gap:.65rem;margin-bottom:.55rem;font-family:'ZCOOL XiaoWei',serif;color:#A83A38;letter-spacing:.12em}.tour-tip-head img{width:32px;height:32px;border-radius:50%;object-fit:cover;background:#e8d9b6}.tour-tip-body{font-size:.9rem;line-height:1.75;letter-spacing:.04em}.tour-actions{display:flex;justify-content:flex-end;gap:.6rem;margin-top:.85rem}.tour-actions button{border:1px solid rgba(33,24,15,.2);background:transparent;color:#21180f;padding:.45rem .7rem;cursor:pointer}.tour-actions .primary{background:#A83A38;color:#F4EFE5;border-color:#A83A38}
+@media (max-width: 760px){.dongpo-panel{grid-template-columns:1fr;padding:1.4rem}.dongpo-figure{min-height:160px;border-right:0;border-bottom:1px solid rgba(242,232,207,.12);padding:0 0 1rem}.dongpo-figure img{max-height:28vh}.ask-entry{bottom:5.8rem}.narration-title{font-size:2rem}.guide-help{right:.75rem;top:.75rem}}
+
 /* ============ REFINED DEPLOY TUNING ============ */
 #weather{opacity:.8}
 .poem-col{
@@ -464,6 +477,7 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
       <span class="tri"><span class="lbl">道</span><span class="tri-bar"><span class="tri-fill" id="tri-dao" style="background: var(--dao); transform: scaleX(0);"></span></span></span>
       <span class="tri"><span class="lbl">佛</span><span class="tri-bar"><span class="tri-fill" id="tri-fo" style="background: var(--fo); transform: scaleX(0);"></span></span></span>
     </div>
+    <button class="pl-narrate-btn" type="button" onclick="openNarration(currentChapter)">&#9654; &#21548;&#19996;&#22369;&#33258;&#36848;</button>
   </div>
 
   <div id="poem-floats"></div>
@@ -514,8 +528,15 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
     <div class="lab">THESIS</div>
     <div class="body">身体自眉山而至儋州，纬度由 <em>30°N</em> 坠至 <em>19°N</em>；笔墨自社稷治国而至空虚寂灭，境界由 <em>儒</em> 涌向 <em>佛</em>。<br><br>这两条轨迹在北宋的山河上交织——<em>越走越南，越写越高</em>。地图，是苏轼写给他自己的一首长诗。</div>
   </div>
+  <button class="ask-entry" id="ask-open" type="button" onclick="openAskDongpo()">&#38382; &#183; &#19996;&#22369;</button>
   <button class="end-restart" id="end-restart" onclick="restart()">从 头 再 游</button>
 </div>
+
+<button id="tour-help" class="guide-help" type="button" aria-label="Guide">?</button>
+
+<div id="narration-modal" class="dongpo-modal" aria-hidden="true"><div class="dongpo-panel" role="dialog" aria-modal="true" aria-labelledby="narration-title"><button class="dongpo-close" id="narration-close" type="button" aria-label="Close">&times;</button><div class="dongpo-figure"><img src="assets/sushi.png" alt="Su Shi"></div><div class="narration-content"><div class="narration-kicker" id="narration-kicker">DONGPO NARRATES</div><div class="narration-title" id="narration-title"></div><div class="narration-text" id="narration-text"></div><div class="audio-box"><button class="audio-btn" id="narration-play" type="button">&#9654;</button><input class="audio-range" id="narration-range" type="range" min="0" max="1000" value="0"><div class="audio-time" id="narration-time">00:00</div></div></div></div></div>
+<div id="ask-modal" class="dongpo-modal" aria-hidden="true"><div class="ask-panel" role="dialog" aria-modal="true" aria-labelledby="ask-title"><div class="ask-head"><span id="ask-title">&#38382; &#183; &#19996;&#22369;</span><button class="dongpo-close" id="ask-close" type="button" aria-label="Close">&times;</button></div><div class="ask-chips" id="ask-chips"></div><div class="ask-log" id="ask-log"></div><div class="ask-form"><input class="ask-input" id="ask-input" type="text" autocomplete="off"><button class="ask-send" id="ask-send" type="button">&#38382;</button></div><div class="ask-hint" id="ask-hint"></div></div></div>
+<div id="tour-shade" class="tour-shade" aria-hidden="true"><div id="tour-highlight" class="tour-highlight"></div><div id="tour-tip" class="tour-tip"><div class="tour-tip-head"><img src="assets/sushi.png" alt=""><span id="tour-step-title"></span></div><div class="tour-tip-body" id="tour-step-body"></div><div class="tour-actions"><button type="button" id="tour-skip">&#36339;&#36807;</button><button type="button" class="primary" id="tour-next">&#19979;&#19968;&#27493;</button></div></div></div>
 
 <div id="title-stage">
   <div class="t-bg-char a">东</div>
@@ -741,7 +762,7 @@ html,body{background:var(--void);color:var(--ink);font-family:'Noto Serif SC',se
 </script>
 
 <script src="vendor/turf.min.js?v=6.5.0"></script>
-<script src="app_改进版.js?v=20260505-water-boundaries1"></script>
+<script src="app_改进版.js?v=20260505-digital-guide1"></script>
 
 
 </body></html>
